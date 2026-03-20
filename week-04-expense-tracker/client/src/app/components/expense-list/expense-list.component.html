@@ -1,0 +1,91 @@
+<div class="page-header">
+  <div class="header-left">
+    <h1 class="page-title">Expense Tracker</h1>
+    <p class="page-subtitle">Manage and track your spending</p>
+  </div>
+  <div class="header-actions">
+    <a routerLink="/reports" class="btn btn-outline">View Reports</a>
+    <a routerLink="/add" class="btn btn-primary">+ Add Expense</a>
+  </div>
+</div>
+
+@if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+}
+
+<div class="toolbar">
+  <div class="filter-group">
+    <label class="filter-label" for="categoryFilter">Filter by Category</label>
+    <select
+      id="categoryFilter"
+      class="select"
+      [value]="selectedCategoryId() ?? ''"
+      (change)="onCategoryChange($any($event.target).value)"
+    >
+      <option value="">All Categories</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="summary-chip">
+    <span class="summary-label">Total</span>
+    <span class="summary-amount expense-amount">{{ total() | currency }}</span>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading expenses…</span>
+  </div>
+} @else if (expenses().length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">💳</div>
+    <h3>No expenses yet</h3>
+    <p>Start tracking by adding your first expense.</p>
+    <a routerLink="/add" class="btn btn-primary">Add Expense</a>
+  </div>
+} @else {
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th class="text-right">Amount</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (expense of expenses(); track expense.id) {
+          <tr>
+            <td class="date-cell">{{ expense.date | date:'mediumDate' }}</td>
+            <td class="desc-cell">{{ expense.description }}</td>
+            <td>
+              <span class="category-badge">
+                {{ expense.category?.name ?? categoryName(expense.categoryId) }}
+              </span>
+            </td>
+            <td class="text-right expense-amount">
+              {{ expense.amount | currency }}
+            </td>
+            <td class="text-center actions-cell">
+              <a [routerLink]="['/edit', expense.id]" class="btn-icon btn-edit" title="Edit">✏️</a>
+              <button class="btn-icon btn-delete" (click)="deleteExpense(expense.id)" title="Delete">🗑️</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="3" class="total-label">Total ({{ expenses().length }} expenses)</td>
+          <td class="text-right expense-amount total-amount">{{ total() | currency }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+}

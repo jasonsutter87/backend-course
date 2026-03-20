@@ -1,0 +1,97 @@
+<div class="form-page">
+  <div class="form-header">
+    <a routerLink="/" class="back-link">← Back to Recipes</a>
+    <h1 class="form-title">{{ isEditMode() ? 'Edit Recipe' : 'Add New Recipe' }}</h1>
+    <p class="form-subtitle">{{ isEditMode() ? 'Update your recipe details' : 'Share a new recipe with your collection' }}</p>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="recipe-form card">
+    <div class="form-group">
+      <label class="form-label" for="name">Recipe Name *</label>
+      <input
+        id="name"
+        type="text"
+        class="form-input"
+        [class.input-error]="f['name'].invalid && f['name'].touched"
+        formControlName="name"
+        placeholder="e.g. Classic Beef Stew"
+      />
+      @if (f['name'].invalid && f['name'].touched) {
+        <span class="field-error">Recipe name is required (min 2 characters).</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="description">Description *</label>
+      <textarea
+        id="description"
+        class="form-input form-textarea"
+        [class.input-error]="f['description'].invalid && f['description'].touched"
+        formControlName="description"
+        rows="4"
+        placeholder="Describe your recipe, ingredients, steps…"
+      ></textarea>
+      @if (f['description'].invalid && f['description'].touched) {
+        <span class="field-error">Description is required.</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="difficulty">Difficulty *</label>
+        <select
+          id="difficulty"
+          class="form-input select"
+          formControlName="difficulty"
+        >
+          @for (d of difficulties; track d) {
+            <option [value]="d">{{ d }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="imageUrl">Image URL</label>
+        <input
+          id="imageUrl"
+          type="url"
+          class="form-input"
+          formControlName="imageUrl"
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+    </div>
+
+    <!-- Tag Selection -->
+    <div class="form-group">
+      <label class="form-label">Tags</label>
+      @if (tags().length === 0) {
+        <p class="hint-text">No tags available. Add tags from the server first.</p>
+      } @else {
+        <div class="tag-checkboxes">
+          @for (tag of tags(); track tag.id) {
+            <button
+              type="button"
+              class="tag-chip"
+              [class.tag-chip-selected]="isTagSelected(tag.id)"
+              (click)="toggleTag(tag.id)"
+            >
+              {{ tag.name }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/" class="btn btn-outline">Cancel</a>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        {{ submitting() ? 'Saving…' : (isEditMode() ? 'Update Recipe' : 'Add Recipe') }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,59 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">&#128393;</div>
+    <h1>Create an account</h1>
+    <p class="auth-subtitle">Join our community of writers and readers</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div *ngIf="error" class="error-banner">{{ error }}</div>
+      <div *ngIf="success" class="success-banner">{{ success }}</div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="yourname"
+          [class.invalid]="usernameControl.invalid && usernameControl.touched"
+        />
+        <span class="field-error" *ngIf="usernameControl.errors?.['required'] && usernameControl.touched">Username is required.</span>
+        <span class="field-error" *ngIf="usernameControl.errors?.['minlength'] && usernameControl.touched">Must be at least 3 characters.</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          [class.invalid]="emailControl.invalid && emailControl.touched"
+        />
+        <span class="field-error" *ngIf="emailControl.errors?.['required'] && emailControl.touched">Email is required.</span>
+        <span class="field-error" *ngIf="emailControl.errors?.['email'] && emailControl.touched">Enter a valid email.</span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="At least 6 characters"
+          [class.invalid]="passwordControl.invalid && passwordControl.touched"
+        />
+        <span class="field-error" *ngIf="passwordControl.errors?.['required'] && passwordControl.touched">Password is required.</span>
+        <span class="field-error" *ngIf="passwordControl.errors?.['minlength'] && passwordControl.touched">Must be at least 6 characters.</span>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting">
+        {{ submitting ? 'Creating account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

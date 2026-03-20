@@ -1,0 +1,102 @@
+<div class="task-list-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="header-title">
+        <h1>Task Tracker</h1>
+        <span class="task-count">
+          {{ activeCount }} active &middot; {{ completedCount }} done
+        </span>
+      </div>
+      <button class="btn btn-primary" (click)="navigateToAdd()">
+        <span class="btn-icon">+</span> Add Task
+      </button>
+    </div>
+
+    <!-- Filter Tabs -->
+    <nav class="filter-tabs">
+      <button
+        class="filter-tab"
+        [class.active]="activeFilter === 'all'"
+        (click)="setFilter('all')">
+        All <span class="tab-badge">{{ tasks.length }}</span>
+      </button>
+      <button
+        class="filter-tab"
+        [class.active]="activeFilter === 'active'"
+        (click)="setFilter('active')">
+        Active <span class="tab-badge">{{ activeCount }}</span>
+      </button>
+      <button
+        class="filter-tab"
+        [class.active]="activeFilter === 'completed'"
+        (click)="setFilter('completed')">
+        Completed <span class="tab-badge">{{ completedCount }}</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Loading State -->
+  <div class="state-message" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading tasks...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="state-message error" *ngIf="error && !loading">
+    <span class="error-icon">&#9888;</span>
+    <p>{{ error }}</p>
+    <button class="btn btn-outline" (click)="loadTasks()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div class="state-message empty" *ngIf="!loading && !error && filteredTasks.length === 0">
+    <span class="empty-icon">&#10003;</span>
+    <p *ngIf="activeFilter === 'all'">No tasks yet. Add one to get started!</p>
+    <p *ngIf="activeFilter === 'active'">No active tasks. Nice work!</p>
+    <p *ngIf="activeFilter === 'completed'">No completed tasks yet.</p>
+    <button class="btn btn-primary" *ngIf="activeFilter === 'all'" (click)="navigateToAdd()">
+      Add your first task
+    </button>
+  </div>
+
+  <!-- Task List -->
+  <ul class="task-list" *ngIf="!loading && !error && filteredTasks.length > 0">
+    <li
+      class="task-card"
+      [class.completed]="task.isComplete"
+      *ngFor="let task of filteredTasks">
+
+      <div class="task-left">
+        <label class="checkbox-wrapper" [title]="task.isComplete ? 'Mark as active' : 'Mark as complete'">
+          <input
+            type="checkbox"
+            [checked]="task.isComplete"
+            (change)="toggleComplete(task)" />
+          <span class="checkmark"></span>
+        </label>
+      </div>
+
+      <div class="task-body" (click)="editTask(task)">
+        <h3 class="task-title" [class.strikethrough]="task.isComplete">
+          {{ task.title }}
+        </h3>
+        <p class="task-description" *ngIf="task.description">
+          {{ task.description }}
+        </p>
+        <span class="task-date">
+          Created {{ task.createdAt | date: 'MMM d, y' }}
+        </span>
+      </div>
+
+      <div class="task-actions">
+        <button class="btn-icon-action edit" (click)="editTask(task)" title="Edit task">
+          &#9998;
+        </button>
+        <button class="btn-icon-action delete" (click)="deleteTask(task)" title="Delete task">
+          &#10005;
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

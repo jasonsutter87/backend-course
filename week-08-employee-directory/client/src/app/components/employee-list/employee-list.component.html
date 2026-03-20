@@ -1,0 +1,77 @@
+<div class="page-header">
+  <div class="header-content">
+    <div>
+      <h1>Employee Directory</h1>
+      <p class="subtitle">Manage your organization's workforce</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/departments" class="btn btn-secondary">Departments</a>
+      <a routerLink="/add" class="btn btn-primary">+ Add Employee</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input
+        type="text"
+        placeholder="Search by name, email, title or department..."
+        [value]="searchTerm()"
+        (input)="onSearch($any($event.target).value)"
+        class="search-input"
+      />
+    </div>
+    <span class="result-count">{{ filteredEmployees().length }} employee{{ filteredEmployees().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <div *ngIf="loading()" class="state-message loading">
+    <div class="spinner"></div>
+    <span>Loading employees...</span>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state-message error">
+    <span class="error-icon">&#9888;</span> {{ error() }}
+  </div>
+
+  <div *ngIf="!loading() && !error() && filteredEmployees().length === 0" class="state-message empty">
+    <span class="empty-icon">&#128101;</span>
+    <p>No employees found.</p>
+    <a routerLink="/add" class="btn btn-primary">Add the first employee</a>
+  </div>
+
+  <div *ngIf="!loading() && filteredEmployees().length > 0" class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of filteredEmployees()">
+          <td>
+            <div class="employee-name">
+              <div class="avatar">{{ emp.firstName[0] }}{{ emp.lastName[0] }}</div>
+              <span>{{ emp.firstName }} {{ emp.lastName }}</span>
+            </div>
+          </td>
+          <td class="title-cell">{{ emp.title }}</td>
+          <td><a class="email-link" [href]="'mailto:' + emp.email">{{ emp.email }}</a></td>
+          <td>
+            <span *ngIf="emp.department" class="dept-badge">{{ emp.department.name }}</span>
+            <span *ngIf="!emp.department" class="no-dept">—</span>
+          </td>
+          <td class="actions-cell">
+            <a [routerLink]="['/' + emp.id + '/edit']" class="btn-action btn-edit">Edit</a>
+            <button class="btn-action btn-delete" (click)="deleteEmployee(emp.id, emp.firstName + ' ' + emp.lastName)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

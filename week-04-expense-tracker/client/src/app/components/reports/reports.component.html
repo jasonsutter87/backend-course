@@ -1,0 +1,133 @@
+<div class="page-header">
+  <div class="header-left">
+    <h1 class="page-title">Reports</h1>
+    <p class="page-subtitle">Understand your spending patterns</p>
+  </div>
+  <a routerLink="/" class="btn btn-outline">← Back to Expenses</a>
+</div>
+
+@if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+}
+
+<!-- Month Picker -->
+<div class="month-picker card">
+  <div class="picker-group">
+    <label class="picker-label">Year</label>
+    <select class="select" [(ngModel)]="selectedYear" (change)="load()">
+      @for (y of years; track y) {
+        <option [value]="y">{{ y }}</option>
+      }
+    </select>
+  </div>
+  <div class="picker-group">
+    <label class="picker-label">Month</label>
+    <select class="select" [(ngModel)]="selectedMonth" (change)="load()">
+      @for (m of months; track $index) {
+        <option [value]="$index + 1">{{ m }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading reports…</span>
+  </div>
+} @else {
+
+  <!-- Monthly Summary -->
+  @if (monthly(); as report) {
+    <section class="section">
+      <h2 class="section-title">{{ monthName(report.month) }} {{ report.year }}</h2>
+      <div class="stats-grid">
+        <div class="stat-card stat-total">
+          <div class="stat-label">Total Spent</div>
+          <div class="stat-value expense-amount">{{ report.total | currency }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-value">{{ report.count }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average per Transaction</div>
+          <div class="stat-value">
+            {{ report.count > 0 ? (report.total / report.count | currency) : '$0.00' }}
+          </div>
+        </div>
+      </div>
+
+      @if (report.expenses.length > 0) {
+        <div class="table-wrapper" style="margin-top: 1.5rem;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th class="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of report.expenses; track e.id) {
+                <tr>
+                  <td class="date-cell">{{ e.date | date:'mediumDate' }}</td>
+                  <td>{{ e.description }}</td>
+                  <td class="text-right expense-amount">{{ e.amount | currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-section">No expenses recorded for this month.</div>
+      }
+    </section>
+  }
+
+  <!-- Category Breakdown -->
+  <section class="section">
+    <h2 class="section-title">Spending by Category (All Time)</h2>
+    @if (byCategory().length === 0) {
+      <div class="empty-section">No data available yet.</div>
+    } @else {
+      <div class="card category-breakdown">
+        @for (cat of byCategory(); track cat.categoryId) {
+          <div class="category-row">
+            <div class="cat-info">
+              <span class="cat-name">{{ cat.categoryName }}</span>
+              <span class="cat-count">{{ cat.count }} expense{{ cat.count === 1 ? '' : 's' }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill" [style.width.%]="barWidth(cat.total)"></div>
+            </div>
+            <div class="cat-total expense-amount">{{ cat.total | currency }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="table-wrapper" style="margin-top: 1.5rem;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th class="text-center">Transactions</th>
+              <th class="text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of byCategory(); track cat.categoryId) {
+              <tr>
+                <td>
+                  <span class="category-badge">{{ cat.categoryName }}</span>
+                </td>
+                <td class="text-center">{{ cat.count }}</td>
+                <td class="text-right expense-amount">{{ cat.total | currency }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+}

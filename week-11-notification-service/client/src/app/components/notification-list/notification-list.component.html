@@ -1,0 +1,100 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        Notifications
+        @if (unreadCount() > 0) {
+          <span class="unread-badge">{{ unreadCount() }}</span>
+        }
+      </h1>
+      <p class="page-subtitle">Your notification inbox</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+      <button class="alert-close" (click)="error.set(null)">&#10005;</button>
+    </div>
+  }
+
+  <div class="toolbar">
+    <div class="filters">
+      <select class="filter-select" [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)">
+        <option value="ALL">All Types</option>
+        <option value="0">Email</option>
+        <option value="1">Webhook</option>
+        <option value="2">In-App</option>
+      </select>
+
+      <select class="filter-select" [ngModel]="readFilter()" (ngModelChange)="readFilter.set($event)">
+        <option value="ALL">All Messages</option>
+        <option value="UNREAD">Unread Only</option>
+        <option value="READ">Read Only</option>
+      </select>
+    </div>
+
+    <span class="result-count">{{ filteredNotifications().length }} message{{ filteredNotifications().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading notifications...</span>
+    </div>
+  } @else if (filteredNotifications().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">&#128276;</div>
+      <h2>All Caught Up</h2>
+      <p>
+        @if (notifications().length === 0) {
+          No notifications yet. Connect the service to start receiving messages.
+        } @else {
+          No notifications match your current filters.
+        }
+      </p>
+    </div>
+  } @else {
+    <div class="notification-list">
+      @for (notification of filteredNotifications(); track notification.id) {
+        <div class="notification-item" [class.unread]="!notification.isRead">
+          <div class="notification-accent"></div>
+
+          <div class="notification-type-col">
+            <span class="type-badge {{ getTypeClass(notification.type) }}" [innerHTML]="getTypeIcon(notification.type) + ' ' + getTypeLabel(notification.type)"></span>
+          </div>
+
+          <div class="notification-body">
+            <div class="notification-meta">
+              <h3 class="notification-title">
+                @if (!notification.isRead) {
+                  <span class="unread-dot"></span>
+                }
+                <a [routerLink]="['/', notification.id]" class="title-link">{{ notification.title }}</a>
+              </h3>
+              <div class="notification-dates">
+                @if (notification.sentAt) {
+                  <span class="sent-at">{{ notification.sentAt | date:'MMM d, yyyy h:mm a' }}</span>
+                } @else {
+                  <span class="not-sent">Not yet sent</span>
+                }
+              </div>
+            </div>
+            <p class="notification-preview">{{ notification.body }}</p>
+          </div>
+
+          <div class="notification-actions">
+            @if (!notification.isRead) {
+              <button class="action-btn" (click)="markAsRead(notification)" title="Mark as read">
+                &#10003; Read
+              </button>
+            }
+            <button class="action-btn action-delete" (click)="delete(notification.id)" title="Delete">
+              &#10005;
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

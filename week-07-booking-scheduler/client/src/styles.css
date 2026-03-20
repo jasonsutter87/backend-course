@@ -1,0 +1,123 @@
+/* =============================================
+   WEEK 7 — BOOKING SCHEDULER
+   Global Styles — Calendar/Scheduling Theme
+   ============================================= */
+
+/* CSS Custom Properties */
+:root {
+  --bg: #0a1a1a;
+  --surface: #0f2424;
+  --teal-dark: #0c1f1f;
+  --teal-mid: #122828;
+  --border-color: #1e3a3a;
+  --accent-teal: #1abc9c;
+  --accent-teal-light: #48d1b5;
+  --text-light: #e0f0ee;
+  --text-muted: #5a8a84;
+  --hover-bg: #142e2e;
+}
+
+/* Base Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text-light);
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--teal-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-teal);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-light);
+}
+
+/* Global Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, opacity 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent-teal);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #16a085;
+  box-shadow: 0 2px 10px rgba(26, 188, 156, 0.4);
+}
+
+.btn-secondary {
+  background: var(--teal-mid);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--hover-bg);
+  border-color: var(--accent-teal);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-light);
+  background: var(--teal-mid);
+}
+
+/* datetime-local input color fix */
+input[type="datetime-local"] {
+  color-scheme: dark;
+}

@@ -1,0 +1,85 @@
+<div class="page">
+  <header class="page-header">
+    <a routerLink="/" class="back-link">
+      <span>&#8592;</span> Back to Keys
+    </a>
+    <h1 class="page-title">
+      <span class="title-icon">+</span>
+      Generate API Key
+    </h1>
+    <p class="page-subtitle">Create a new key to authorize gateway access</p>
+  </header>
+
+  <div class="form-card">
+    @if (error()) {
+      <div class="alert alert-error">
+        <span>&#9888;</span> {{ error() }}
+      </div>
+    }
+
+    @if (success()) {
+      <div class="alert alert-success">
+        <span>&#10003;</span> {{ success() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <div class="form-group">
+        <label for="keyName" class="form-label">
+          Key Name <span class="required">*</span>
+        </label>
+        <input
+          id="keyName"
+          type="text"
+          class="form-input"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          name="keyName"
+          placeholder="e.g. Production App, Mobile Client, Partner Integration"
+          autocomplete="off"
+          required />
+        <p class="form-hint">A descriptive name to identify where this key will be used.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="rateLimit" class="form-label">
+          Rate Limit <span class="required">*</span>
+        </label>
+        <div class="input-with-suffix">
+          <input
+            id="rateLimit"
+            type="number"
+            class="form-input"
+            [ngModel]="rateLimit()"
+            (ngModelChange)="rateLimit.set($event)"
+            name="rateLimit"
+            placeholder="100"
+            min="1"
+            max="10000"
+            required />
+          <span class="input-suffix">requests / minute</span>
+        </div>
+        <p class="form-hint">Maximum number of API requests allowed per minute for this key.</p>
+      </div>
+
+      <div class="form-info-box">
+        <div class="info-icon">&#128273;</div>
+        <div class="info-text">
+          <strong>Key Generation</strong>
+          <p>A unique API key string will be automatically generated and assigned. The key will be active immediately after creation.</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="btn-spinner"></span> Generating...
+          } @else {
+            <span>&#9670;</span> Generate Key
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

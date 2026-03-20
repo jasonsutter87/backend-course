@@ -1,0 +1,106 @@
+<div class="page">
+  <header class="page-header">
+    <a routerLink="/" class="back-link">&#8592; Back to Keys</a>
+
+    <div class="header-main">
+      <h1 class="page-title">
+        <span class="title-icon">&#128220;</span>
+        Request Logs
+      </h1>
+      @if (apiKey()) {
+        <div class="key-context">
+          <span class="context-label">Key:</span>
+          <span class="context-name">{{ apiKey()!.name }}</span>
+          <code class="context-key">{{ maskKey(apiKey()!.key) }}</code>
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+    </div>
+  }
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label class="filter-label">Method</label>
+      <select class="filter-select" [ngModel]="methodFilter()" (ngModelChange)="methodFilter.set($event)">
+        <option value="ALL">All Methods</option>
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+        <option value="PATCH">PATCH</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Status</label>
+      <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <option value="ALL">All Status Codes</option>
+        <option value="2xx">2xx — Success</option>
+        <option value="4xx">4xx — Client Error</option>
+        <option value="5xx">5xx — Server Error</option>
+      </select>
+    </div>
+
+    <div class="filter-summary">
+      <span class="result-count">{{ filteredLogs().length }} request{{ filteredLogs().length !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading request logs...</span>
+    </div>
+  } @else if (filteredLogs().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">&#128202;</div>
+      <h2>No Logs Found</h2>
+      <p>
+        @if (logs().length === 0) {
+          No requests have been logged for this API key yet.
+        } @else {
+          No requests match your current filters.
+        }
+      </p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Status</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of filteredLogs(); track log.id) {
+            <tr>
+              <td>
+                <span class="method-badge method-{{ log.method.toLowerCase() }}">{{ log.method }}</span>
+              </td>
+              <td class="col-endpoint">
+                <code class="endpoint-text">{{ log.endpoint }}</code>
+              </td>
+              <td>
+                <span class="status-badge {{ getStatusClass(log.statusCode) }}">
+                  {{ log.statusCode }}
+                </span>
+              </td>
+              <td class="col-time">
+                <span class="time-primary">{{ log.timestamp | date:'HH:mm:ss' }}</span>
+                <span class="time-secondary">{{ log.timestamp | date:'MMM d' }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

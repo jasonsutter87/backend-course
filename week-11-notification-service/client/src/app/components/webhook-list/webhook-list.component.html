@@ -1,0 +1,77 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Webhooks</h1>
+      <p class="page-subtitle">Manage outgoing webhook endpoints</p>
+    </div>
+    <a routerLink="/webhooks/add" class="btn btn-primary">
+      <span>+</span> Add Webhook
+    </a>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+      <button class="alert-close" (click)="error.set(null)">&#10005;</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading webhooks...</span>
+    </div>
+  } @else if (webhooks().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">&#128279;</div>
+      <h2>No Webhooks Configured</h2>
+      <p>Add a webhook endpoint to receive event notifications.</p>
+      <a routerLink="/webhooks/add" class="btn btn-primary">Add First Webhook</a>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Events</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (webhook of webhooks(); track webhook.id) {
+            <tr [class.row-inactive]="!webhook.isActive">
+              <td class="col-url">
+                <code class="url-text">{{ webhook.url }}</code>
+              </td>
+              <td>
+                <button
+                  class="status-toggle"
+                  [class.active]="webhook.isActive"
+                  [class.inactive]="!webhook.isActive"
+                  (click)="toggleActive(webhook)">
+                  {{ webhook.isActive ? 'Active' : 'Inactive' }}
+                </button>
+              </td>
+              <td class="col-events">
+                <div class="events-list">
+                  @for (event of getEventsList(webhook.events); track event) {
+                    <span class="event-tag">{{ event }}</span>
+                  }
+                  @if (getEventsList(webhook.events).length === 0) {
+                    <span class="no-events">No events</span>
+                  }
+                </div>
+              </td>
+              <td class="col-actions">
+                <a [routerLink]="['/webhooks', webhook.id, 'edit']" class="btn btn-sm btn-ghost">Edit</a>
+                <button class="btn btn-sm btn-danger" (click)="delete(webhook.id)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

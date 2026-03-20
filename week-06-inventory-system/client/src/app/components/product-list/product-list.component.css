@@ -1,0 +1,236 @@
+.page-header {
+  background: linear-gradient(135deg, var(--steel-dark) 0%, var(--steel-mid) 100%);
+  padding: 2rem 2.5rem;
+  border-bottom: 3px solid var(--accent-blue);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--text-light);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.page-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-banner {
+  background: #3d1a1a;
+  border: 1px solid #c0392b;
+  color: #e74c3c;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.table-container {
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.table-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.record-count {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.warning-badge {
+  background: #7c3200;
+  color: #ff9944;
+  border: 1px solid #ff6600;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead tr {
+  background: var(--steel-mid);
+}
+
+.data-table th {
+  padding: 0.875rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.data-row {
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-row:hover {
+  background: var(--hover-bg) !important;
+}
+
+.data-table td {
+  padding: 1rem 1.5rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.row-even {
+  background: var(--row-even);
+}
+
+.row-warning {
+  background: #1e0e00 !important;
+  border-left: 3px solid #ff6600;
+}
+
+.row-warning:hover {
+  background: #2a1500 !important;
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.sku-cell code {
+  background: var(--steel-mid);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent-blue-light);
+  font-family: 'Courier New', monospace;
+}
+
+.stock-ok {
+  color: #27ae60;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.stock-low {
+  color: #ff6600;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.status-ok {
+  background: #1a3a1a;
+  color: #27ae60;
+  border: 1px solid #27ae60;
+}
+
+.status-low {
+  background: #3a1a00;
+  color: #ff6600;
+  border: 1px solid #ff6600;
+}
+
+.actions-cell {
+  text-align: right;
+}
+
+.action-link {
+  color: var(--accent-blue-light);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--accent-blue);
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.action-link:hover {
+  background: var(--accent-blue);
+  color: #fff;
+}

@@ -1,0 +1,53 @@
+<div class="page">
+  <a routerLink="/" class="back-link">&#8592; Back to Inbox</a>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading notification...</span>
+    </div>
+  } @else if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+    </div>
+  } @else if (notification()) {
+    <div class="detail-card">
+      <div class="detail-header">
+        <div class="header-top">
+          <span class="type-badge {{ getTypeClass(notification()!.type) }}">
+            {{ getTypeLabel(notification()!.type) }}
+          </span>
+          <span class="read-status" [class.unread-status]="!notification()!.isRead">
+            {{ notification()!.isRead ? 'Read' : 'Unread' }}
+          </span>
+        </div>
+        <h1 class="detail-title">{{ notification()!.title }}</h1>
+        <div class="detail-meta">
+          <div class="meta-item">
+            <span class="meta-label">ID</span>
+            <span class="meta-value">#{{ notification()!.id }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Sent</span>
+            <span class="meta-value">
+              @if (notification()!.sentAt) {
+                {{ notification()!.sentAt | date:'MMMM d, yyyy \'at\' h:mm a' }}
+              } @else {
+                <em>Not yet sent</em>
+              }
+            </span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Type</span>
+            <span class="meta-value">{{ getTypeLabel(notification()!.type) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <h2 class="body-label">Message</h2>
+        <div class="body-content">{{ notification()!.body }}</div>
+      </div>
+    </div>
+  }
+</div>

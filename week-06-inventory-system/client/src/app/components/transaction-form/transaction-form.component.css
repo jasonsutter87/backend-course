@@ -1,0 +1,230 @@
+.page-header {
+  background: linear-gradient(135deg, var(--steel-dark) 0%, var(--steel-mid) 100%);
+  padding: 1.5rem 2.5rem;
+  border-bottom: 3px solid var(--accent-blue);
+}
+
+.header-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.back-link {
+  color: var(--accent-blue-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: var(--text-light);
+}
+
+.page-body {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+}
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.form-card-header {
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--steel-mid);
+}
+
+.form-card-header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  color: var(--text-light);
+}
+
+.form-card-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-banner {
+  margin: 1.5rem 2rem 0;
+  background: #3d1a1a;
+  border: 1px solid #c0392b;
+  color: #e74c3c;
+  padding: 0.875rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+form {
+  padding: 1.75rem 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.form-input {
+  background: var(--steel-mid);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.65rem 0.875rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.2);
+}
+
+.input-error {
+  border-color: #e74c3c !important;
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #e74c3c;
+}
+
+.product-preview {
+  background: var(--steel-mid);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.preview-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.preview-value {
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.preview-low {
+  color: #ff6600;
+}
+
+.preview-warning {
+  font-size: 0.78rem;
+  color: #ff6600;
+  background: #3a1a00;
+  border: 1px solid #ff6600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.type-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  background: var(--steel-mid);
+}
+
+.type-option input[type="radio"] {
+  display: none;
+}
+
+.type-icon {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.type-selected {
+  border-color: #27ae60 !important;
+  color: #27ae60 !important;
+  background: #1a3a1a !important;
+}
+
+.type-out-option {
+  color: var(--text-muted);
+}
+
+.type-selected-out {
+  border-color: #e74c3c !important;
+  color: #e74c3c !important;
+  background: #3a1a1a !important;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}

@@ -1,0 +1,64 @@
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-title">
+      <h1>All Bookings</h1>
+      <p class="subtitle">Manage customer reservations</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/" class="btn btn-secondary">View Schedule</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading bookings...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-banner">{{ error }}</div>
+  } @else if (bookings.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No Bookings Yet</h3>
+      <p>Bookings will appear here once customers reserve time slots.</p>
+      <a routerLink="/" class="btn btn-primary">View Schedule</a>
+    </div>
+  } @else {
+    <div class="bookings-list">
+      <div class="list-meta">{{ bookings.length }} booking{{ bookings.length !== 1 ? 's' : '' }}</div>
+      @for (booking of bookings; track booking.id) {
+        <div class="booking-card">
+          <div class="booking-left">
+            <div class="customer-avatar">
+              {{ booking.customerName.charAt(0).toUpperCase() }}
+            </div>
+            <div class="customer-info">
+              <div class="customer-name">{{ booking.customerName }}</div>
+              <div class="customer-email">{{ booking.customerEmail }}</div>
+            </div>
+          </div>
+          <div class="booking-slot">
+            @if (booking.timeSlot) {
+              <div class="slot-time">
+                {{ formatDateTime(booking.timeSlot.startTime) }}
+              </div>
+              <div class="slot-range">
+                {{ formatDateTime(booking.timeSlot.startTime) }} — {{ formatDateTime(booking.timeSlot.endTime) }}
+              </div>
+            } @else {
+              <div class="slot-time">Slot #{{ booking.timeSlotId }}</div>
+            }
+          </div>
+          <div class="booking-meta">
+            <div class="booked-at">Booked {{ formatDateTime(booking.bookedAt) }}</div>
+          </div>
+          <div class="booking-actions">
+            <button class="cancel-btn" (click)="cancelBooking(booking.id)">Cancel</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

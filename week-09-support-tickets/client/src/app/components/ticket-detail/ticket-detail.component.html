@@ -1,0 +1,111 @@
+<div class="page-header">
+  <div class="header-content">
+    <a routerLink="/" class="btn btn-back">&#8592; All Tickets</a>
+    <div *ngIf="ticket()" class="header-actions">
+      <a [routerLink]="['/' + ticket()!.id + '/edit']" class="btn btn-edit">Edit Ticket</a>
+      <button class="btn btn-delete" (click)="deleteTicket()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <div *ngIf="loading()" class="state-message loading">
+    <div class="spinner"></div> Loading ticket...
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state-message error">&#9888; {{ error() }}</div>
+
+  <div *ngIf="ticket() && !loading()" class="detail-layout">
+    <!-- Main content -->
+    <div class="detail-main">
+      <div class="ticket-header">
+        <div class="ticket-id-badge">#{{ ticket()!.id }}</div>
+        <h1 class="ticket-title">{{ ticket()!.title }}</h1>
+        <div class="ticket-meta-row">
+          <span class="priority-badge" [ngClass]="priorityClass(ticket()!.priority)">
+            {{ PRIORITY_LABELS[ticket()!.priority] }}
+          </span>
+          <span class="status-pill" [ngClass]="statusClass(ticket()!.status)">
+            {{ STATUS_LABELS[ticket()!.status] }}
+          </span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>Description</h2>
+        <p class="description-text">{{ ticket()!.description }}</p>
+      </div>
+
+      <!-- Status Workflow -->
+      <div class="section-card workflow-card">
+        <h2>Status Workflow</h2>
+        <p class="current-status-label">
+          Current status: <strong>{{ STATUS_LABELS[ticket()!.status] }}</strong>
+        </p>
+        <div class="workflow-actions">
+          <button
+            *ngFor="let t of statusTransitions"
+            class="btn workflow-btn"
+            [ngClass]="t.cssClass"
+            [disabled]="saving()"
+            (click)="applyStatus(t.targetStatus)"
+          >
+            {{ t.label }}
+          </button>
+          <span *ngIf="statusTransitions.length === 0" class="no-transitions">No transitions available.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <h3>Assignment</h3>
+        <div *ngIf="!showAssignField()">
+          <p class="assign-value">
+            <span *ngIf="ticket()!.assignedTo">&#128100; {{ ticket()!.assignedTo }}</span>
+            <span *ngIf="!ticket()!.assignedTo" class="unassigned">Unassigned</span>
+          </p>
+          <button class="btn btn-sm btn-outline" (click)="showAssignField.set(true)">
+            {{ ticket()!.assignedTo ? 'Reassign' : 'Assign' }}
+          </button>
+        </div>
+        <div *ngIf="showAssignField()" class="assign-form">
+          <input
+            type="text"
+            class="assign-input"
+            placeholder="Enter name..."
+            [value]="assignInput()"
+            (input)="assignInput.set($any($event.target).value)"
+          />
+          <div class="assign-btns">
+            <button class="btn btn-sm btn-save" (click)="saveAssignment()" [disabled]="saving()">Save</button>
+            <button class="btn btn-sm btn-outline" (click)="showAssignField.set(false)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Details</h3>
+        <dl class="meta-list">
+          <dt>Priority</dt>
+          <dd>
+            <span class="priority-badge" [ngClass]="priorityClass(ticket()!.priority)">
+              {{ PRIORITY_LABELS[ticket()!.priority] }}
+            </span>
+          </dd>
+          <dt>Status</dt>
+          <dd>
+            <span class="status-pill" [ngClass]="statusClass(ticket()!.status)">
+              {{ STATUS_LABELS[ticket()!.status] }}
+            </span>
+          </dd>
+          <dt>Created</dt>
+          <dd>{{ ticket()!.createdAt | date:'medium' }}</dd>
+          <dt>Updated</dt>
+          <dd>{{ ticket()!.updatedAt | date:'medium' }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

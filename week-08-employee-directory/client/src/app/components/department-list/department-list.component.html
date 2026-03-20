@@ -1,0 +1,56 @@
+<div class="page-header">
+  <div class="header-content">
+    <div>
+      <h1>Departments</h1>
+      <p class="subtitle">Organizational structure and hierarchy</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/" class="btn btn-secondary">&#8592; Employee Directory</a>
+      <a routerLink="/departments/add" class="btn btn-primary">+ Add Department</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <div *ngIf="loading()" class="state-message loading">
+    <div class="spinner"></div>
+    <span>Loading departments...</span>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state-message error">
+    <span>&#9888; {{ error() }}</span>
+  </div>
+
+  <div *ngIf="!loading() && !error() && flatTree().length === 0" class="state-message empty">
+    <span class="empty-icon">&#127970;</span>
+    <p>No departments yet.</p>
+    <a routerLink="/departments/add" class="btn btn-primary">Create the first department</a>
+  </div>
+
+  <div *ngIf="!loading() && flatTree().length > 0" class="dept-card">
+    <div class="dept-count-bar">
+      {{ departments().length }} department{{ departments().length !== 1 ? 's' : '' }} total
+    </div>
+    <div class="dept-tree">
+      <div *ngFor="let node of flatTree()" class="dept-row" [ngClass]="'depth-' + node.depth">
+        <div class="dept-info" [style.paddingLeft]="getIndent(node.depth)">
+          <div class="tree-line" *ngIf="node.depth > 0">
+            <span class="tree-branch">&#x2514;</span>
+          </div>
+          <span class="dept-icon">&#127970;</span>
+          <span class="dept-name">{{ node.name }}</span>
+          <span *ngIf="node.parentDepartment" class="parent-label">
+            under {{ node.parentDepartment.name }}
+          </span>
+        </div>
+        <div class="dept-meta">
+          <span class="employee-count">
+            {{ node.employeeCount }} employee{{ node.employeeCount !== 1 ? 's' : '' }}
+          </span>
+          <a [routerLink]="['/departments', node.id, 'edit']" class="btn-action btn-edit">Edit</a>
+          <button class="btn-action btn-delete" (click)="deleteDepartment(node.id, node.name)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

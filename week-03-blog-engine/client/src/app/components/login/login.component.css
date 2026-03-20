@@ -1,0 +1,131 @@
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: #fff;
+  border: 1px solid #f0d9b5;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(180, 100, 20, 0.09);
+  text-align: center;
+}
+
+.auth-logo {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.auth-card h1 {
+  font-size: 1.8rem;
+  color: #7c3d0c;
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  color: #9a7550;
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.error-banner {
+  background: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6c0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+  text-align: left;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7c3d0c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.form-group input {
+  padding: 11px 14px;
+  border: 1.5px solid #e8ccaa;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fffdf8;
+  color: #2d2016;
+  outline: none;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+.form-group input.invalid {
+  border-color: #e05252;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #c0392b;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 8px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #9a7550;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.auth-switch a {
+  color: #d97706;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,93 @@
+<div class="page-header">
+  <div class="header-left">
+    <h1 class="page-title">Recipe Manager</h1>
+    <p class="page-subtitle">{{ filteredRecipes().length }} recipe{{ filteredRecipes().length === 1 ? '' : 's' }} found</p>
+  </div>
+  <a routerLink="/add" class="btn btn-primary">+ New Recipe</a>
+</div>
+
+@if (error()) {
+  <div class="alert alert-error">{{ error() }}</div>
+}
+
+<!-- Search & Filter Bar -->
+<div class="toolbar">
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search recipes…"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
+    />
+  </div>
+
+  <div class="tag-filters">
+    <button
+      class="tag-filter-btn"
+      [class.active]="selectedTagId() === null"
+      (click)="selectedTagId.set(null)"
+    >All</button>
+    @for (tag of tags(); track tag.id) {
+      <button
+        class="tag-filter-btn"
+        [class.active]="selectedTagId() === tag.id"
+        (click)="selectedTagId.set(tag.id)"
+      >{{ tag.name }}</button>
+    }
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading recipes…</span>
+  </div>
+} @else if (filteredRecipes().length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">🍳</div>
+    <h3>No recipes found</h3>
+    <p>{{ recipes().length === 0 ? 'Add your first recipe to get started.' : 'Try adjusting your search or filter.' }}</p>
+    @if (recipes().length === 0) {
+      <a routerLink="/add" class="btn btn-primary">Add Recipe</a>
+    }
+  </div>
+} @else {
+  <div class="recipe-grid">
+    @for (recipe of filteredRecipes(); track recipe.id) {
+      <a [routerLink]="['/', recipe.id]" class="recipe-card">
+        <div class="recipe-image">
+          @if (recipe.imageUrl) {
+            <img [src]="recipe.imageUrl" [alt]="recipe.name" (error)="$any($event.target).style.display='none'" />
+          }
+          <div class="image-placeholder">🍽️</div>
+        </div>
+
+        <div class="recipe-body">
+          <div class="recipe-meta">
+            <span class="difficulty-badge" [class]="difficultyClass(recipe.difficulty)">
+              {{ recipe.difficulty }}
+            </span>
+          </div>
+
+          <h3 class="recipe-name">{{ recipe.name }}</h3>
+          <p class="recipe-desc">{{ recipe.description }}</p>
+
+          @if (recipeTags(recipe).length > 0) {
+            <div class="recipe-tags">
+              @for (tag of recipeTags(recipe); track tag.id) {
+                <span class="tag-pill">{{ tag.name }}</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="recipe-footer">
+          <a [routerLink]="['/', recipe.id, 'edit']" class="btn btn-outline btn-sm" (click)="$event.stopPropagation()">Edit</a>
+          <button class="btn btn-danger-outline btn-sm" (click)="deleteRecipe(recipe.id, $event)">Delete</button>
+        </div>
+      </a>
+    }
+  </div>
+}

@@ -1,0 +1,94 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="title-icon">&#9670;</span>
+        API Key Management
+      </h1>
+      <p class="page-subtitle">Manage authentication keys and monitor gateway access</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/generate" class="btn btn-primary">
+        <span class="btn-icon">+</span>
+        Generate Key
+      </a>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="alert-icon">&#9888;</span>
+      {{ error() }}
+      <button class="alert-close" (click)="error.set(null)">&#10005;</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading API keys...</span>
+    </div>
+  } @else if (apiKeys().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">&#128273;</div>
+      <h2>No API Keys Found</h2>
+      <p>Generate your first API key to start controlling gateway access.</p>
+      <a routerLink="/generate" class="btn btn-primary">Generate First Key</a>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Key</th>
+            <th>Status</th>
+            <th>Rate Limit</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (key of apiKeys(); track key.id) {
+            <tr [class.row-inactive]="!key.isActive">
+              <td class="col-name">
+                <span class="key-name">{{ key.name }}</span>
+              </td>
+              <td class="col-key">
+                <code class="key-value">{{ maskKey(key.key) }}</code>
+              </td>
+              <td class="col-status">
+                <button
+                  class="status-toggle"
+                  [class.status-active]="key.isActive"
+                  [class.status-inactive]="!key.isActive"
+                  (click)="toggleActive(key)"
+                  [title]="key.isActive ? 'Click to deactivate' : 'Click to activate'">
+                  {{ key.isActive ? 'Active' : 'Inactive' }}
+                </button>
+              </td>
+              <td class="col-rate">
+                <span class="rate-badge">{{ key.rateLimit }} req/min</span>
+              </td>
+              <td class="col-date">
+                <span class="date-value">{{ key.createdAt | date:'MMM d, yyyy' }}</span>
+              </td>
+              <td class="col-actions">
+                <a [routerLink]="['/', key.id, 'logs']" class="btn btn-sm btn-ghost" title="View request logs">
+                  Logs
+                </a>
+                <button class="btn btn-sm btn-danger" (click)="deleteKey(key.id)" title="Delete key">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span class="record-count">{{ apiKeys().length }} key{{ apiKeys().length !== 1 ? 's' : '' }} total</span>
+    </div>
+  }
+</div>

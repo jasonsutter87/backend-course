@@ -1,0 +1,92 @@
+<div class="page">
+  <a routerLink="/" class="back-link">&#8592; Back to Dashboard</a>
+
+  <header class="page-header">
+    <h1 class="page-title">{{ isEditMode() ? 'Edit Widget' : 'Add Widget' }}</h1>
+    <p class="page-subtitle">{{ isEditMode() ? 'Update this widget\'s configuration' : 'Configure a new dashboard widget' }}</p>
+  </header>
+
+  <div class="form-card">
+    @if (error()) {
+      <div class="alert alert-error"><span>&#9888;</span> {{ error() }}</div>
+    }
+    @if (success()) {
+      <div class="alert alert-success"><span>&#10003;</span> {{ success() }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label">Widget Title <span class="required">*</span></label>
+        <input
+          type="text"
+          class="form-input"
+          [ngModel]="title()"
+          (ngModelChange)="title.set($event)"
+          name="title"
+          placeholder="e.g. Monthly Revenue, Active Users, Sales Trend"
+          required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Widget Type</label>
+        <div class="type-selector">
+          @for (t of widgetTypes; track t) {
+            <button
+              type="button"
+              class="type-option"
+              [class.selected]="type() === t"
+              (click)="type.set(t)">
+              <span class="type-option-icon">
+                @switch (t) {
+                  @case ('Chart')   { &#128200; }
+                  @case ('Table')   { &#128202; }
+                  @case ('Counter') { &#128290; }
+                  @case ('List')    { &#9776; }
+                }
+              </span>
+              <span>{{ t }}</span>
+            </button>
+          }
+        </div>
+        <p class="form-hint">The visual representation for this widget.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Data Source</label>
+        <input
+          type="text"
+          class="form-input"
+          [ngModel]="dataSource()"
+          (ngModelChange)="dataSource.set($event)"
+          name="dataSource"
+          placeholder="e.g. /api/analytics/trend?category=revenue" />
+        <p class="form-hint">The API endpoint or data source identifier for this widget.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Config (JSON)</label>
+        <textarea
+          class="form-input form-textarea"
+          [ngModel]="config()"
+          (ngModelChange)="config.set($event)"
+          name="config"
+          rows="5"
+          placeholder='{ "color": "#6366f1", "aggregation": "sum" }'
+          spellcheck="false"></textarea>
+        <p class="form-hint">Optional JSON configuration for widget behavior and appearance.</p>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="btn-spinner"></span>
+            {{ isEditMode() ? 'Saving...' : 'Adding...' }}
+          } @else {
+            {{ isEditMode() ? 'Save Changes' : 'Add Widget' }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+/* =============================================
+   WEEK 6 — INVENTORY SYSTEM
+   Global Styles — Warehouse/Industrial Theme
+   ============================================= */
+
+/* CSS Custom Properties */
+:root {
+  --bg: #0f1318;
+  --surface: #161c24;
+  --steel-dark: #1a2232;
+  --steel-mid: #1e2a3a;
+  --border-color: #2a3a4a;
+  --accent-blue: #4682b4;
+  --accent-blue-light: #7ab3d6;
+  --text-light: #e8edf2;
+  --text-muted: #7a9ab2;
+  --hover-bg: #1e2f40;
+  --row-even: #131920;
+}
+
+/* Base Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text-light);
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--steel-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-light);
+}
+
+/* Global Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.25rem;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, opacity 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent-blue);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #3a6d9c;
+  box-shadow: 0 2px 8px rgba(70, 130, 180, 0.4);
+}
+
+.btn-secondary {
+  background: var(--steel-mid);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--hover-bg);
+  border-color: var(--accent-blue);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-light);
+  background: var(--steel-mid);
+}
+
+/* Select element */
+select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a9ab2' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  padding-right: 2.5rem;
+}
+
+select.form-input option {
+  background: var(--steel-mid);
+  color: var(--text-light);
+}

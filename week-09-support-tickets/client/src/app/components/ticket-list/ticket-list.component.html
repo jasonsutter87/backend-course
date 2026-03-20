@@ -1,0 +1,77 @@
+<div class="page-header">
+  <div class="header-content">
+    <div>
+      <h1>Support Tickets</h1>
+      <p class="subtitle">Track and resolve customer issues</p>
+    </div>
+    <a routerLink="/new" class="btn btn-primary">+ New Ticket</a>
+  </div>
+</div>
+
+<div class="page-body">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input
+        type="text"
+        placeholder="Search tickets..."
+        [value]="searchTerm()"
+        (input)="onSearch($any($event.target).value)"
+        class="search-input"
+      />
+    </div>
+    <select class="filter-select" [value]="priorityFilter()" (change)="onPriorityChange($any($event.target).value)">
+      <option value="all">All Priorities</option>
+      <option value="0">Low</option>
+      <option value="1">Medium</option>
+      <option value="2">High</option>
+      <option value="3">Critical</option>
+    </select>
+    <span class="result-count">{{ filteredTickets().length }} ticket{{ filteredTickets().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <!-- Loading / Error states -->
+  <div *ngIf="loading()" class="state-message loading">
+    <div class="spinner"></div> Loading tickets...
+  </div>
+  <div *ngIf="error() && !loading()" class="state-message error">&#9888; {{ error() }}</div>
+
+  <!-- Kanban Board -->
+  <div *ngIf="!loading() && !error()" class="kanban-board">
+    <div
+      *ngFor="let col of kanbanColumns()"
+      class="kanban-col"
+      [ngClass]="columnClass(col.status)"
+    >
+      <div class="col-header">
+        <span class="col-label">{{ col.label }}</span>
+        <span class="col-count">{{ col.tickets.length }}</span>
+      </div>
+
+      <div *ngIf="col.tickets.length === 0" class="col-empty">No tickets</div>
+
+      <a
+        *ngFor="let ticket of col.tickets"
+        [routerLink]="['/' + ticket.id]"
+        class="ticket-card"
+        [ngClass]="priorityClass(ticket.priority)"
+      >
+        <div class="ticket-top">
+          <span class="ticket-id">#{{ ticket.id }}</span>
+          <span class="priority-badge" [ngClass]="priorityClass(ticket.priority)">
+            {{ PRIORITY_LABELS[ticket.priority] }}
+          </span>
+        </div>
+        <div class="ticket-title">{{ ticket.title }}</div>
+        <div class="ticket-desc">{{ ticket.description | slice:0:80 }}{{ ticket.description.length > 80 ? '...' : '' }}</div>
+        <div class="ticket-footer">
+          <span *ngIf="ticket.assignedTo" class="assignee">
+            &#128100; {{ ticket.assignedTo }}
+          </span>
+          <span *ngIf="!ticket.assignedTo" class="unassigned">Unassigned</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

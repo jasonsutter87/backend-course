@@ -1,0 +1,80 @@
+<div class="form-container">
+  <!-- Loading overlay for edit mode -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading task...</p>
+  </div>
+
+  <div class="form-card" *ngIf="!loading">
+    <!-- Form Header -->
+    <header class="form-header">
+      <button class="btn-back" (click)="cancel()" title="Go back">
+        &#8592; Back
+      </button>
+      <div>
+        <h2 class="form-title">{{ isEditMode ? 'Edit Task' : 'New Task' }}</h2>
+        <p class="form-subtitle">
+          {{ isEditMode ? 'Update the details below.' : 'Fill in the details to create a new task.' }}
+        </p>
+      </div>
+    </header>
+
+    <!-- Error Message -->
+    <div class="form-error" *ngIf="error">
+      <span>&#9888;</span> {{ error }}
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-group">
+        <label for="title" class="form-label">
+          Title <span class="required">*</span>
+        </label>
+        <input
+          id="title"
+          type="text"
+          class="form-input"
+          [class.invalid]="titleControl.invalid && titleControl.touched"
+          formControlName="title"
+          placeholder="What needs to be done?"
+          autocomplete="off" />
+        <span
+          class="field-error"
+          *ngIf="titleControl.invalid && titleControl.touched">
+          Title is required.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">
+          Description <span class="optional">(optional)</span>
+        </label>
+        <textarea
+          id="description"
+          class="form-textarea"
+          formControlName="description"
+          placeholder="Add more details about this task..."
+          rows="4">
+        </textarea>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-ghost"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="form.invalid || submitting">
+          <span *ngIf="!submitting">
+            {{ isEditMode ? 'Update Task' : 'Add Task' }}
+          </span>
+          <span *ngIf="submitting">Saving...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

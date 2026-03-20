@@ -1,0 +1,67 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">{{ widgets().length }} widget{{ widgets().length !== 1 ? 's' : '' }} configured</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/analytics" class="btn btn-ghost">
+        <span>&#128200;</span> Analytics
+      </a>
+      <a routerLink="/widgets/add" class="btn btn-primary">
+        <span>+</span> Add Widget
+      </a>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+      <button class="alert-close" (click)="error.set(null)">&#10005;</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading dashboard...</span>
+    </div>
+  } @else if (widgets().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">&#128202;</div>
+      <h2>Your Dashboard is Empty</h2>
+      <p>Add widgets to start visualizing your data. Connect the service to load live data.</p>
+      <a routerLink="/widgets/add" class="btn btn-primary">Add First Widget</a>
+    </div>
+  } @else {
+    <div class="widget-grid">
+      @for (widget of widgets(); track widget.id) {
+        <div class="widget-card {{ getTypeClass(widget.type) }}">
+          <div class="widget-header">
+            <div class="widget-drag-handle" title="Drag to reorder (connect to enable)">
+              <span class="drag-dots">&#8942;&#8942;</span>
+            </div>
+            <span class="widget-type-icon" [innerHTML]="getTypeIcon(widget.type)"></span>
+            <h3 class="widget-title">{{ widget.title }}</h3>
+            <div class="widget-menu">
+              <a [routerLink]="['/widgets', widget.id, 'edit']" class="widget-action" title="Edit widget">&#9998;</a>
+              <button class="widget-action widget-delete" (click)="delete(widget.id)" title="Remove widget">&#10005;</button>
+            </div>
+          </div>
+
+          <div class="widget-body">
+            <div class="widget-placeholder">
+              <div class="placeholder-icon" [innerHTML]="getTypeIcon(widget.type)"></div>
+              <p class="placeholder-text">Connect to API to load data</p>
+              <code class="placeholder-source">{{ widget.dataSource || 'No data source configured' }}</code>
+            </div>
+          </div>
+
+          <div class="widget-footer">
+            <span class="widget-type-tag">{{ widget.type }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

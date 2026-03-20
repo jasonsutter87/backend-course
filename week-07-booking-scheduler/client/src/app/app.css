@@ -1,0 +1,6 @@
+/* App-level — all layout handled per component */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+}

@@ -1,0 +1,78 @@
+<div class="page-header">
+  <div class="header-content">
+    <a routerLink="/" class="back-link">← Back to Schedule</a>
+  </div>
+</div>
+
+<div class="page-body">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2>Book a Time Slot</h2>
+      <p>Complete your details to confirm the reservation.</p>
+    </div>
+
+    @if (loading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading slot info...</p>
+      </div>
+    } @else {
+      @if (slot) {
+        <div class="slot-preview" [class.slot-unavailable]="!slot.isAvailable">
+          <div class="slot-preview-icon">🕐</div>
+          <div class="slot-preview-info">
+            <div class="slot-preview-label">Your Time Slot</div>
+            <div class="slot-preview-time">{{ formatDateTime(slot.startTime) }}</div>
+            <div class="slot-preview-end">until {{ formatDateTime(slot.endTime) }}</div>
+          </div>
+          @if (!slot.isAvailable) {
+            <div class="unavailable-badge">Not Available</div>
+          }
+        </div>
+      }
+
+      @if (error) {
+        <div class="error-banner">{{ error }}</div>
+      }
+
+      @if (slot?.isAvailable) {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="form-group">
+            <label for="customerName" class="form-label">Your Name <span class="required">*</span></label>
+            <input
+              id="customerName"
+              type="text"
+              formControlName="customerName"
+              class="form-input"
+              [class.input-error]="f['customerName'].invalid && f['customerName'].touched"
+              placeholder="Jane Smith">
+            @if (f['customerName'].invalid && f['customerName'].touched) {
+              <span class="field-error">Name is required (min 2 characters)</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="customerEmail" class="form-label">Email Address <span class="required">*</span></label>
+            <input
+              id="customerEmail"
+              type="email"
+              formControlName="customerEmail"
+              class="form-input"
+              [class.input-error]="f['customerEmail'].invalid && f['customerEmail'].touched"
+              placeholder="jane@example.com">
+            @if (f['customerEmail'].invalid && f['customerEmail'].touched) {
+              <span class="field-error">Valid email address is required</span>
+            }
+          </div>
+
+          <div class="form-actions">
+            <a routerLink="/" class="btn btn-ghost">Cancel</a>
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting">
+              @if (submitting) { Confirming... } @else { Confirm Booking }
+            </button>
+          </div>
+        </form>
+      }
+    }
+  </div>
+</div>

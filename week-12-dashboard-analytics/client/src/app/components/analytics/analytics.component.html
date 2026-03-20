@@ -1,0 +1,177 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Analytics</h1>
+      <p class="page-subtitle">Data summaries and trend analysis</p>
+    </div>
+    <a routerLink="/" class="btn btn-ghost">&#8592; Dashboard</a>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>&#9888;</span> {{ error() }}
+      <button class="alert-close" (click)="error.set(null)">&#10005;</button>
+    </div>
+  }
+
+  <!-- Summary Cards -->
+  <section class="section">
+    <h2 class="section-title">Summary</h2>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon">&#128202;</div>
+        <div class="summary-body">
+          <div class="summary-label">Total Data Points</div>
+          <div class="summary-value">
+            @if (loadingSummary()) {
+              <span class="value-loading">--</span>
+            } @else {
+              {{ summary()?.totalDataPoints ?? '--' }}
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">&#8721;</div>
+        <div class="summary-body">
+          <div class="summary-label">Total Value</div>
+          <div class="summary-value">
+            @if (loadingSummary()) {
+              <span class="value-loading">--</span>
+            } @else {
+              {{ summary()?.total != null ? (summary()!.total | number:'1.0-2') : '--' }}
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">&#216;</div>
+        <div class="summary-body">
+          <div class="summary-label">Average</div>
+          <div class="summary-value">
+            @if (loadingSummary()) {
+              <span class="value-loading">--</span>
+            } @else {
+              {{ summary()?.average != null ? (summary()!.average | number:'1.0-2') : '--' }}
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card card-min">
+        <div class="summary-icon">&#8595;</div>
+        <div class="summary-body">
+          <div class="summary-label">Min Value</div>
+          <div class="summary-value">
+            @if (loadingSummary()) {
+              <span class="value-loading">--</span>
+            } @else {
+              {{ summary()?.min != null ? (summary()!.min | number:'1.0-2') : '--' }}
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card card-max">
+        <div class="summary-icon">&#8593;</div>
+        <div class="summary-body">
+          <div class="summary-label">Max Value</div>
+          <div class="summary-value">
+            @if (loadingSummary()) {
+              <span class="value-loading">--</span>
+            } @else {
+              {{ summary()?.max != null ? (summary()!.max | number:'1.0-2') : '--' }}
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trend Section -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Trend Analysis</h2>
+    </div>
+
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label class="filter-label">Category</label>
+        <input
+          type="text"
+          class="filter-input"
+          [ngModel]="categoryFilter()"
+          (ngModelChange)="categoryFilter.set($event)"
+          name="category"
+          placeholder="All categories" />
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">From</label>
+        <input
+          type="date"
+          class="filter-input"
+          [ngModel]="fromDate()"
+          (ngModelChange)="fromDate.set($event)"
+          name="from" />
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">To</label>
+        <input
+          type="date"
+          class="filter-input"
+          [ngModel]="toDate()"
+          (ngModelChange)="toDate.set($event)"
+          name="to" />
+      </div>
+      <button class="btn btn-primary btn-sm" (click)="applyFilters()">Apply</button>
+    </div>
+
+    @if (loadingTrend()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <span>Loading trend data...</span>
+      </div>
+    } @else if (trendData().length === 0) {
+      <div class="trend-placeholder">
+        <div class="trend-chart-mock">
+          <!-- Placeholder bars to give visual structure -->
+          <div class="mock-bar-group">
+            @for (h of [40, 65, 30, 80, 55, 90, 45, 70, 35, 85, 60, 75]; track $index) {
+              <div class="mock-bar" [style.height.%]="h"></div>
+            }
+          </div>
+          <div class="chart-overlay">
+            <span class="chart-overlay-icon">&#128200;</span>
+            <p class="chart-overlay-text">Connect to API to load trend data</p>
+            <code class="chart-overlay-hint">GET /api/analytics/trend</code>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="trend-table-container">
+        <table class="trend-table">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Category</th>
+              <th>Value</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (point of trendData(); track point.id) {
+              <tr>
+                <td>{{ point.label }}</td>
+                <td><span class="category-tag">{{ point.category }}</span></td>
+                <td class="value-cell">{{ point.value | number:'1.0-4' }}</td>
+                <td class="time-cell">{{ point.timestamp | date:'MMM d, yyyy HH:mm' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

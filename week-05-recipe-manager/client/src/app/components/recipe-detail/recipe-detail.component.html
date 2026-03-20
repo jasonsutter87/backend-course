@@ -1,0 +1,52 @@
+<div class="detail-page">
+  <a routerLink="/" class="back-link">← Back to Recipes</a>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading recipe…</span>
+    </div>
+  }
+
+  @if (recipe(); as r) {
+    <div class="recipe-hero">
+      <div class="hero-image">
+        @if (r.imageUrl) {
+          <img [src]="r.imageUrl" [alt]="r.name" />
+        }
+        <div class="image-fallback">🍽️</div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-meta">
+          <span class="difficulty-badge" [class]="difficultyClass(r.difficulty)">
+            {{ r.difficulty }}
+          </span>
+        </div>
+        <h1 class="recipe-title">{{ r.name }}</h1>
+
+        @if (recipeTags(r).length > 0) {
+          <div class="tags-row">
+            @for (tag of recipeTags(r); track tag.id) {
+              <span class="tag-pill">{{ tag.name }}</span>
+            }
+          </div>
+        }
+
+        <div class="hero-actions">
+          <a [routerLink]="['/', r.id, 'edit']" class="btn btn-primary">Edit Recipe</a>
+          <button class="btn btn-danger-outline" (click)="deleteRecipe()">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="recipe-body card">
+      <h2 class="section-label">Description</h2>
+      <p class="recipe-description">{{ r.description }}</p>
+    </div>
+  }
+</div>

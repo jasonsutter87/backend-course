@@ -1,0 +1,56 @@
+<div class="contact-list">
+  <header class="page-header">
+    <div class="header-title">
+      <h1>Contact Book</h1>
+      <span class="contact-count" *ngIf="!loading">{{ contacts.length }} contact{{ contacts.length !== 1 ? 's' : '' }}</span>
+    </div>
+    <button class="btn btn-primary" (click)="navigateToAdd()">+ Add Contact</button>
+  </header>
+
+  <div class="search-bar">
+    <div class="search-input-wrapper">
+      <span class="search-icon">&#128269;</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by name or email..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      />
+      <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">&#10005;</button>
+    </div>
+    <button class="btn btn-secondary" (click)="onSearch()" [disabled]="searching">
+      {{ searching ? 'Searching...' : 'Search' }}
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error-banner">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading contacts...</p>
+  </div>
+
+  <div *ngIf="!loading && contacts.length === 0 && !error" class="empty-state">
+    <div class="empty-icon">&#128100;</div>
+    <h2>No contacts yet</h2>
+    <p>Add your first contact to get started.</p>
+    <button class="btn btn-primary" (click)="navigateToAdd()">+ Add Contact</button>
+  </div>
+
+  <div *ngIf="!loading && contacts.length > 0" class="contacts-grid">
+    <div class="contact-card" *ngFor="let contact of contacts">
+      <div class="contact-avatar">{{ contact.firstName[0] }}{{ contact.lastName[0] }}</div>
+      <div class="contact-info">
+        <h3 class="contact-name">{{ contact.firstName }} {{ contact.lastName }}</h3>
+        <a class="contact-email" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+        <p class="contact-phone" *ngIf="contact.phone">{{ contact.phone }}</p>
+        <p class="contact-date">Added {{ contact.createdAt | date:'mediumDate' }}</p>
+      </div>
+      <div class="contact-actions">
+        <button class="btn btn-edit" (click)="editContact(contact)">Edit</button>
+        <button class="btn btn-delete" (click)="deleteContact(contact)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

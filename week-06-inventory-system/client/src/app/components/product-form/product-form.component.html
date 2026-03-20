@@ -1,0 +1,101 @@
+<div class="page-header">
+  <div class="header-content">
+    <a routerLink="/" class="back-link">← Back to Products</a>
+  </div>
+</div>
+
+<div class="page-body">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+      <p>{{ isEditMode ? 'Update product details below.' : 'Fill in the details to add a new product to inventory.' }}</p>
+    </div>
+
+    @if (loading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading product data...</p>
+      </div>
+    } @else {
+      @if (error) {
+        <div class="error-banner">{{ error }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name" class="form-label">Product Name <span class="required">*</span></label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              class="form-input"
+              [class.input-error]="f['name'].invalid && f['name'].touched"
+              placeholder="e.g. Industrial Bolt M8">
+            @if (f['name'].invalid && f['name'].touched) {
+              <span class="field-error">Name is required (min 2 characters)</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="sku" class="form-label">SKU <span class="required">*</span></label>
+            <input
+              id="sku"
+              type="text"
+              formControlName="sku"
+              class="form-input"
+              [class.input-error]="f['sku'].invalid && f['sku'].touched"
+              placeholder="e.g. BOLT-M8-001">
+            @if (f['sku'].invalid && f['sku'].touched) {
+              <span class="field-error">SKU is required (min 2 characters)</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stockLevel" class="form-label">Stock Level <span class="required">*</span></label>
+            <input
+              id="stockLevel"
+              type="number"
+              formControlName="stockLevel"
+              class="form-input"
+              [class.input-error]="f['stockLevel'].invalid && f['stockLevel'].touched"
+              min="0"
+              placeholder="0">
+            @if (f['stockLevel'].invalid && f['stockLevel'].touched) {
+              <span class="field-error">Stock level must be 0 or greater</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="minStockLevel" class="form-label">Minimum Stock Level <span class="required">*</span></label>
+            <input
+              id="minStockLevel"
+              type="number"
+              formControlName="minStockLevel"
+              class="form-input"
+              [class.input-error]="f['minStockLevel'].invalid && f['minStockLevel'].touched"
+              min="0"
+              placeholder="0">
+            @if (f['minStockLevel'].invalid && f['minStockLevel'].touched) {
+              <span class="field-error">Minimum stock must be 0 or greater</span>
+            }
+            <span class="field-hint">Alerts trigger when stock drops below this threshold.</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting">
+            @if (submitting) {
+              Saving...
+            } @else {
+              {{ isEditMode ? 'Save Changes' : 'Add Product' }}
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

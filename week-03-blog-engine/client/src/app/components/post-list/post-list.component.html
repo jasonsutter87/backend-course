@@ -1,0 +1,53 @@
+<div class="post-list">
+  <header class="site-header">
+    <div class="site-branding">
+      <h1 class="site-title">The Blog</h1>
+      <p class="site-tagline">Thoughts, stories, and ideas</p>
+    </div>
+    <nav class="site-nav">
+      <ng-container *ngIf="authService.isLoggedIn(); else guestNav">
+        <span class="nav-user">{{ authService.getCurrentUser()?.username }}</span>
+        <a routerLink="/posts/new" class="btn btn-primary">+ New Post</a>
+        <button class="btn btn-ghost" (click)="logout()">Sign Out</button>
+      </ng-container>
+      <ng-template #guestNav>
+        <a routerLink="/login" class="btn btn-ghost">Sign In</a>
+        <a routerLink="/register" class="btn btn-primary">Register</a>
+      </ng-template>
+    </nav>
+  </header>
+
+  <div *ngIf="error" class="error-banner">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading posts...</p>
+  </div>
+
+  <div *ngIf="!loading && posts.length === 0 && !error" class="empty-state">
+    <div class="empty-icon">&#128196;</div>
+    <h2>No posts yet</h2>
+    <p>Be the first to write something.</p>
+    <a routerLink="/posts/new" class="btn btn-primary">Write a Post</a>
+  </div>
+
+  <div *ngIf="!loading && posts.length > 0" class="posts-feed">
+    <article class="post-card" *ngFor="let post of posts" (click)="viewPost(post)">
+      <div class="post-card-body">
+        <h2 class="post-title">{{ post.title }}</h2>
+        <p class="post-excerpt">{{ excerpt(post.content) }}</p>
+      </div>
+      <footer class="post-card-footer">
+        <div class="post-meta">
+          <span class="post-author">{{ post.author?.username || 'Anonymous' }}</span>
+          <span class="meta-separator">·</span>
+          <span class="post-date">{{ post.createdAt | date:'MMM d, y' }}</span>
+        </div>
+        <div class="post-stats">
+          <span class="comment-count">{{ post.comments?.length || 0 }} comment{{ (post.comments?.length || 0) !== 1 ? 's' : '' }}</span>
+          <span class="read-more">Read &rarr;</span>
+        </div>
+      </footer>
+    </article>
+  </div>
+</div>

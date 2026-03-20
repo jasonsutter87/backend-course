@@ -1,0 +1,77 @@
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-title">
+      <h1>Schedule</h1>
+      <p class="subtitle">Available &amp; booked time slots</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/bookings" class="btn btn-secondary">View Bookings</a>
+      <a routerLink="/slots/new" class="btn btn-primary">+ Add Slot</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading schedule...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-banner">{{ error }}</div>
+  } @else {
+    <div class="stats-bar">
+      <div class="stat-pill stat-available">
+        <span class="dot dot-green"></span>
+        {{ availableCount }} Available
+      </div>
+      <div class="stat-pill stat-booked">
+        <span class="dot dot-gray"></span>
+        {{ bookedCount }} Booked
+      </div>
+      <div class="stat-pill">
+        {{ slots.length }} Total
+      </div>
+    </div>
+
+    @if (slots.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🗓️</div>
+        <h3>No Time Slots Yet</h3>
+        <p>Create your first time slot to start accepting bookings.</p>
+        <a routerLink="/slots/new" class="btn btn-primary">Add First Slot</a>
+      </div>
+    } @else {
+      <div class="slots-grid">
+        @for (slot of slots; track slot.id) {
+          <div
+            class="slot-card"
+            [class.slot-available]="slot.isAvailable"
+            [class.slot-booked]="!slot.isAvailable"
+            (click)="bookSlot(slot)">
+            <div class="slot-date">{{ formatDate(slot.startTime) }}</div>
+            <div class="slot-times">
+              <span class="time-start">{{ formatTime(slot.startTime) }}</span>
+              <span class="time-sep">→</span>
+              <span class="time-end">{{ formatTime(slot.endTime) }}</span>
+            </div>
+            <div class="slot-status">
+              @if (slot.isAvailable) {
+                <span class="status-available">Available</span>
+                <button class="book-btn">Book Now</button>
+              } @else {
+                <span class="status-booked">Booked</span>
+              }
+            </div>
+            <button
+              class="delete-btn"
+              (click)="deleteSlot(slot.id, $event)"
+              title="Delete slot">
+              &times;
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

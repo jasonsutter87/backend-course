@@ -1,0 +1,79 @@
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-title">
+      <h1>Inventory Management</h1>
+      <p class="subtitle">Product Stock Overview</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/transactions/new" class="btn btn-secondary">Log Transaction</a>
+      <a routerLink="/add" class="btn btn-primary">+ Add Product</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading inventory...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-banner">{{ error }}</div>
+  } @else if (products.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>No Products Yet</h3>
+      <p>Add your first product to get started.</p>
+      <a routerLink="/add" class="btn btn-primary">Add Product</a>
+    </div>
+  } @else {
+    <div class="table-container">
+      <div class="table-meta">
+        <span class="record-count">{{ products.length }} product{{ products.length !== 1 ? 's' : '' }}</span>
+        @if (lowStockCount > 0) {
+          <span class="warning-badge">{{ lowStockCount }} low stock</span>
+        }
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>SKU</th>
+            <th>Stock Level</th>
+            <th>Min Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products; track product.id; let even = $even) {
+            <tr
+              [class.row-even]="even"
+              [class.row-warning]="isLowStock(product)"
+              (click)="viewProduct(product.id)"
+              class="data-row">
+              <td class="product-name">{{ product.name }}</td>
+              <td class="sku-cell"><code>{{ product.sku }}</code></td>
+              <td class="stock-cell">
+                <span [class.stock-low]="isLowStock(product)" [class.stock-ok]="!isLowStock(product)">
+                  {{ product.stockLevel }}
+                </span>
+              </td>
+              <td class="min-stock-cell">{{ product.minStockLevel }}</td>
+              <td>
+                @if (isLowStock(product)) {
+                  <span class="status-badge status-low">Low Stock</span>
+                } @else {
+                  <span class="status-badge status-ok">In Stock</span>
+                }
+              </td>
+              <td class="actions-cell" (click)="$event.stopPropagation()">
+                <a [routerLink]="[product.id, 'edit']" class="action-link">Edit</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

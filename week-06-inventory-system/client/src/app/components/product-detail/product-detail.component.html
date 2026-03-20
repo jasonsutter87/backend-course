@@ -1,0 +1,98 @@
+<div class="page-header">
+  <div class="header-content">
+    <a routerLink="/" class="back-link">← Back to Products</a>
+    <div class="header-actions">
+      @if (product) {
+        <a [routerLink]="['/', product.id, 'edit']" class="btn btn-secondary">Edit Product</a>
+        <a routerLink="/transactions/new" [queryParams]="{ productId: product.id }" class="btn btn-primary">Log Transaction</a>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading product...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-banner">{{ error }}</div>
+  } @else if (product) {
+    <div class="product-card">
+      <div class="product-header">
+        <div>
+          <h2 class="product-name">{{ product.name }}</h2>
+          <code class="sku-tag">{{ product.sku }}</code>
+        </div>
+        @if (isLowStock()) {
+          <span class="status-badge status-low">Low Stock Warning</span>
+        } @else {
+          <span class="status-badge status-ok">In Stock</span>
+        }
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card" [class.stat-warning]="isLowStock()">
+          <div class="stat-label">Current Stock</div>
+          <div class="stat-value" [class.value-low]="isLowStock()">{{ product.stockLevel }}</div>
+          <div class="stat-unit">units</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Minimum Stock</div>
+          <div class="stat-value">{{ product.minStockLevel }}</div>
+          <div class="stat-unit">units</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Buffer</div>
+          <div class="stat-value" [class.value-low]="isLowStock()">
+            {{ product.stockLevel - product.minStockLevel }}
+          </div>
+          <div class="stat-unit">above minimum</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-value">{{ transactions.length }}</div>
+          <div class="stat-unit">recorded</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>Transaction History</h3>
+    </div>
+
+    @if (transactions.length === 0) {
+      <div class="empty-transactions">
+        <p>No transactions recorded for this product yet.</p>
+        <a routerLink="/transactions/new" [queryParams]="{ productId: product.id }" class="btn btn-primary">Log First Transaction</a>
+      </div>
+    } @else {
+      <div class="transactions-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Type</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of transactions; track tx.id; let even = $even) {
+              <tr [class.row-even]="even">
+                <td>{{ tx.timestamp | date:'medium' }}</td>
+                <td>
+                  <span class="type-badge" [class.type-in]="tx.type === 'In'" [class.type-out]="tx.type === 'Out'">
+                    {{ tx.type === 'In' ? 'Stock In' : 'Stock Out' }}
+                  </span>
+                </td>
+                <td class="quantity-cell" [class.qty-in]="tx.type === 'In'" [class.qty-out]="tx.type === 'Out'">
+                  {{ tx.type === 'In' ? '+' : '-' }}{{ tx.quantity }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
