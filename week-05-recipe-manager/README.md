@@ -22,9 +22,9 @@ A recipe management app where users can create recipes and organize them with ta
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
 
 ### Start the Frontend
 ```bash
@@ -33,6 +33,38 @@ npm install
 ng serve
 ```
 Open **http://localhost:4200**
+
+## Database
+
+This project uses **EF Core Migrations** to manage the database schema. The database is not created automatically — you must run migrations before starting the server for the first time.
+
+### First-Time Setup
+Install the EF Core CLI tools (one-time, global):
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Create and apply the initial migration from the `server/` directory:
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+### Updating the Schema
+Whenever you change a model (e.g., add a field to `Recipe`):
+1. Edit the model class
+2. `dotnet ef migrations add DescriptiveNameHere`
+3. `dotnet ef database update`
+
+### Useful Commands
+| Command | What it does |
+|---------|--------------|
+| `dotnet ef migrations list` | Show all applied and pending migrations |
+| `dotnet ef migrations remove` | Remove the last migration (only if not yet applied) |
+| `dotnet ef database drop` | Delete the database file entirely |
+| `dotnet ef migrations script` | Output the raw SQL for all migrations |
+
+See `db/migrations-guide.md` for a full walkthrough, and `db/schema.sql` for the raw SQL that EF generates.
 
 ## API Endpoints
 

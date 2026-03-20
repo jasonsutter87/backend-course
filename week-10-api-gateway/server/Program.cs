@@ -21,10 +21,7 @@ app.UseMiddleware<ApiKeyMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
-}
+// Database is managed via EF Core Migrations
+// Run: dotnet ef database update
 
 app.Run();

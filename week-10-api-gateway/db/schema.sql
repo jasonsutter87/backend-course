@@ -1,0 +1,20 @@
+-- Week 10: API Gateway Schema
+
+CREATE TABLE IF NOT EXISTS "ApiKeys" (
+    "Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "Key" TEXT NOT NULL,
+    "Name" TEXT NOT NULL,
+    "IsActive" INTEGER NOT NULL DEFAULT 1,
+    "RateLimit" INTEGER NOT NULL DEFAULT 100,
+    "CreatedAt" TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "RequestLogs" (
+    "Id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "ApiKeyId" INTEGER NOT NULL,
+    "Endpoint" TEXT NOT NULL,
+    "Method" TEXT NOT NULL,
+    "StatusCode" INTEGER NOT NULL,
+    "Timestamp" TEXT NOT NULL,
+    FOREIGN KEY ("ApiKeyId") REFERENCES "ApiKeys" ("Id")
+);

@@ -23,9 +23,34 @@ A support ticket management API that lets teams create, track, and resolve custo
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
+
+### Database
+
+The schema is managed via EF Core Migrations. Reference SQL files live in the `db/` folder:
+
+| File | Purpose |
+|------|---------|
+| `db/schema.sql` | Table definitions — use as a reference for the raw SQL structure |
+| `db/views.sql` | SQL views for reporting (open tickets by priority, tickets per assignee, resolution times) |
+| `db/seed.sql` | Sample data — 15 tickets with varied statuses, priorities, and assignees |
+| `db/queries.sql` | Practice queries: overdue tickets, daily counts, status breakdowns |
+
+#### Running the SQL files manually
+```bash
+sqlite3 db/app.db < db/schema.sql
+sqlite3 db/app.db < db/seed.sql
+sqlite3 db/app.db < db/views.sql
+```
+
+#### Querying a view
+```bash
+sqlite3 db/app.db "SELECT * FROM vw_OpenTicketsByPriority;"
+sqlite3 db/app.db "SELECT * FROM vw_TicketsPerAssignee;"
+sqlite3 db/app.db "SELECT * FROM vw_ResolutionTime;"
+```
 
 ### Start the Frontend
 ```bash
@@ -41,6 +66,7 @@ Open **http://localhost:4200**
 |--------|----------|-------------|
 | GET | `/api/tickets` | List all tickets |
 | GET | `/api/tickets/{id}` | Get a single ticket by ID |
+| GET | `/api/tickets/stats` | Aggregate counts by status and critical priority |
 | POST | `/api/tickets` | Create a new ticket |
 | PUT | `/api/tickets/{id}` | Replace all ticket fields |
 | DELETE | `/api/tickets/{id}` | Delete a ticket |
@@ -125,6 +151,39 @@ curl -X PUT http://localhost:5000/api/tickets/1 \
 # Delete a ticket
 curl -X DELETE http://localhost:5000/api/tickets/1
 ```
+
+## Stats Endpoint
+
+`GET /api/tickets/stats` returns a JSON summary of ticket counts without sending all the raw data to the client:
+
+```json
+{
+  "total": 15,
+  "open": 6,
+  "inProgress": 4,
+  "resolved": 3,
+  "closed": 2,
+  "critical": 3
+}
+```
+
+## SQL Views
+
+Views are virtual tables — they look like tables but execute a query behind the scenes. They are ideal for reporting because you define the query once and reuse it without repeating the SQL everywhere.
+
+```sql
+-- A view defined once...
+CREATE VIEW vw_OpenTicketsByPriority AS
+SELECT Priority, COUNT(*) AS TicketCount FROM Tickets WHERE Status IN (0,1) GROUP BY Priority;
+
+-- ...queried exactly like a table
+SELECT * FROM vw_OpenTicketsByPriority;
+```
+
+Views in this project:
+- `vw_OpenTicketsByPriority` — open and in-progress tickets grouped by priority label
+- `vw_TicketsPerAssignee` — per-person breakdown of open, in-progress, and resolved tickets
+- `vw_ResolutionTime` — average days to close for each assignee
 
 ## Key Takeaways
 - PATCH endpoints let clients update a single field without resending the entire resource, reducing payload size and preventing accidental overwrites

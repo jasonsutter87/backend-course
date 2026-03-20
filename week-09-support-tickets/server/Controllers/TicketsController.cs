@@ -94,4 +94,19 @@ public class TicketsController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok(ticket);
     }
+
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        var stats = new
+        {
+            Total = await _db.Tickets.CountAsync(),
+            Open = await _db.Tickets.CountAsync(t => t.Status == TicketStatus.Open),
+            InProgress = await _db.Tickets.CountAsync(t => t.Status == TicketStatus.InProgress),
+            Resolved = await _db.Tickets.CountAsync(t => t.Status == TicketStatus.Resolved),
+            Closed = await _db.Tickets.CountAsync(t => t.Status == TicketStatus.Closed),
+            Critical = await _db.Tickets.CountAsync(t => t.Priority == Priority.Critical)
+        };
+        return Ok(stats);
+    }
 }

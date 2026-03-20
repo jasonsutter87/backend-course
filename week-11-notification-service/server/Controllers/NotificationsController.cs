@@ -65,4 +65,12 @@ public class NotificationsController : ControllerBase
         await _db.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpPost("mark-all-read")]
+    public async Task<IActionResult> MarkAllRead()
+    {
+        var count = await _db.Database.ExecuteSqlRawAsync(
+            "UPDATE Notifications SET IsRead = 1 WHERE IsRead = 0");
+        return Ok(new { updated = count });
+    }
 }

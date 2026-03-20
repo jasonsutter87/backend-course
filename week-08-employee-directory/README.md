@@ -23,9 +23,9 @@ An employee directory app for browsing staff and org structure. Departments can 
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
 
 ### Start the Frontend
 ```bash
@@ -34,6 +34,53 @@ npm install
 ng serve
 ```
 Open **http://localhost:4200**
+
+## Database
+
+This project uses **EF Core Migrations** with seed data and performance indexes. Running migrations creates the schema, populates starter departments and employees, and applies all indexes in a single step.
+
+### First-Time Setup
+Install the EF Core CLI tools (one-time, global):
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Create and apply the initial migration from the `server/` directory:
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+### Seed Data
+Seed data is defined in `AppDbContext.OnModelCreating` using `HasData()`. After running `database update` you will have three top-level departments (Engineering, Marketing, Sales), two sub-departments (Frontend, Backend under Engineering), and four sample employees. See `db/seed.sql` for the equivalent raw SQL.
+
+### Indexes
+Indexes are declared in `AppDbContext.OnModelCreating` using the EF Core Fluent API and are applied as part of the migration. This project adds the following indexes:
+
+| Index | Purpose |
+|-------|---------|
+| `IX_Employees_Email` (unique) | Fast, unique lookup by email address |
+| `IX_Employees_DepartmentId` | Fast filtering of employees by department |
+| `IX_Employees_Name` (LastName, FirstName) | Fast name search — composite covers both columns |
+| `IX_Departments_ParentDepartmentId` | Fast lookup of sub-departments for a given parent |
+
+**When to add an index:** Add one when you have a column you frequently filter or sort by and the table has more than a few hundred rows. Every index speeds up reads but adds a small cost to writes, so index purposefully. See `db/indexes.sql` for the raw SQL equivalents.
+
+### Updating the Schema
+Whenever you change a model, index configuration, or seed data:
+1. Make the change in the model class or `AppDbContext`
+2. `dotnet ef migrations add DescriptiveNameHere`
+3. `dotnet ef database update`
+
+### Useful Commands
+| Command | What it does |
+|---------|--------------|
+| `dotnet ef migrations list` | Show all applied and pending migrations |
+| `dotnet ef migrations remove` | Remove the last migration (only if not yet applied) |
+| `dotnet ef database drop` | Delete the database file entirely |
+| `dotnet ef migrations script` | Output the raw SQL for all migrations |
+
+See `db/migrations-guide.md` for a full walkthrough, `db/schema.sql` for table DDL, and `db/indexes.sql` for index DDL.
 
 ## API Endpoints
 

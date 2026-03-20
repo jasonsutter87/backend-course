@@ -23,9 +23,9 @@ An appointment scheduling app where admins define available time slots and custo
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
 
 ### Start the Frontend
 ```bash
@@ -34,6 +34,43 @@ npm install
 ng serve
 ```
 Open **http://localhost:4200**
+
+## Database
+
+This project uses **EF Core Migrations** to manage the database schema. It also uses EF Core's `HasData()` to seed sample time slots automatically when migrations are applied.
+
+### First-Time Setup
+Install the EF Core CLI tools (one-time, global):
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Create and apply the initial migration from the `server/` directory:
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+After running `database update`, the database will contain five pre-seeded time slots ready for booking.
+
+### Seed Data
+Seed data is defined in `AppDbContext.OnModelCreating` using `HasData()`. This is the EF-native way to ship starter data alongside your schema — it is applied as part of the migration, not at runtime. See `db/seed.sql` for the equivalent raw SQL.
+
+### Updating the Schema
+Whenever you change a model or the seed data:
+1. Make the change in the model class or `AppDbContext`
+2. `dotnet ef migrations add DescriptiveNameHere`
+3. `dotnet ef database update`
+
+### Useful Commands
+| Command | What it does |
+|---------|--------------|
+| `dotnet ef migrations list` | Show all applied and pending migrations |
+| `dotnet ef migrations remove` | Remove the last migration (only if not yet applied) |
+| `dotnet ef database drop` | Delete the database file entirely |
+| `dotnet ef migrations script` | Output the raw SQL for all migrations |
+
+See `db/migrations-guide.md` for a full walkthrough and `db/schema.sql` for the raw DDL.
 
 ## API Endpoints
 

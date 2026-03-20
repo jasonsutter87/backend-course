@@ -23,9 +23,28 @@ A dashboard analytics service that stores raw metric data points and a set of co
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
+
+### Database
+
+The schema is managed via EF Core Migrations. Reference SQL files live in the `db/` folder:
+
+| File | Purpose |
+|------|---------|
+| `db/schema.sql` | Table definitions for `DataPoints` and `DashboardWidgets` |
+| `db/optimization-guide.md` | Deep dive: EXPLAIN QUERY PLAN, indexing strategies, EF Core query logging |
+| `db/indexes.sql` | Strategic indexes for category filtering, time-range queries, and aggregations |
+| `db/seed.sql` | 56 data points across revenue, users, orders, pageviews spanning 6 months |
+| `db/queries.sql` | Analytical queries: trends, aggregations, pagination, EXPLAIN examples |
+
+#### Running the SQL files manually
+```bash
+sqlite3 db/app.db < db/schema.sql
+sqlite3 db/app.db < db/indexes.sql
+sqlite3 db/app.db < db/seed.sql
+```
 
 ### Start the Frontend
 ```bash
@@ -131,6 +150,45 @@ Look for `// TODO:` comments in these service files:
 - `client/src/app/services/analytics.service.ts`
 
 Replace `return of([])` with actual `this.http.get/post/put/delete()` calls to connect to the backend API.
+
+## Query Optimization & EXPLAIN
+
+Use `EXPLAIN QUERY PLAN` in SQLite to see whether a query is doing a full table scan or using an index:
+
+```sql
+-- Before adding an index — will show: SCAN TABLE DataPoints
+EXPLAIN QUERY PLAN
+SELECT * FROM DataPoints WHERE Category = 'revenue';
+
+-- After: CREATE INDEX IX_DataPoints_Category ON DataPoints(Category);
+-- Will show: SEARCH TABLE DataPoints USING INDEX IX_DataPoints_Category
+```
+
+The difference matters at scale. A table with 1 million rows takes milliseconds with an index and seconds without one.
+
+### Index Strategy for This Project
+
+| Index | Columns | Speeds Up |
+|-------|---------|-----------|
+| `IX_DataPoints_Category` | `Category` | `WHERE Category = 'x'` |
+| `IX_DataPoints_Timestamp` | `Timestamp` | `ORDER BY Timestamp`, date range filters |
+| `IX_DataPoints_Category_Timestamp` | `Category, Timestamp` | Filtered trend queries (most common pattern) |
+| `IX_DataPoints_Category_Value` | `Category, Value` | AVG/SUM aggregations — covering index avoids table reads |
+
+A **covering index** means the index itself contains all the columns the query needs, so SQLite never has to read the actual table row. For `SELECT AVG(Value) FROM DataPoints WHERE Category = 'revenue'`, the `(Category, Value)` index covers the entire query.
+
+### EF Core Query Logging
+
+To see the SQL EF Core generates, add logging to `Program.cs`:
+
+```csharp
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=../db/app.db")
+           .LogTo(Console.WriteLine, LogLevel.Information)
+           .EnableSensitiveDataLogging());
+```
+
+This prints every SQL statement to the console as requests come in — invaluable for catching N+1 queries and unexpected full scans. See `db/optimization-guide.md` for the full reference.
 
 ## Key Takeaways
 - `IQueryable` composition lets you build up filters incrementally before hitting the database — only one SQL query is executed regardless of how many `.Where()` calls you chain

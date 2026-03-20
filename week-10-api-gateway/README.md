@@ -23,9 +23,36 @@ An API gateway service that sits in front of downstream resources. Clients must 
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
+
+### Database
+
+The schema is managed via EF Core Migrations. Reference SQL files live in the `db/` folder:
+
+| File | Purpose |
+|------|---------|
+| `db/schema.sql` | Table definitions for `ApiKeys` and `RequestLogs` |
+| `db/views.sql` | Reporting views: request volume per key, hourly traffic, top endpoints |
+| `db/indexes.sql` | Performance indexes — run after schema creation |
+| `db/seed.sql` | Sample API keys and 25 request log entries |
+| `db/queries.sql` | Analytical queries: error rates, rate limit usage, traffic by hour |
+
+#### Running the SQL files manually
+```bash
+sqlite3 db/app.db < db/schema.sql
+sqlite3 db/app.db < db/indexes.sql
+sqlite3 db/app.db < db/seed.sql
+sqlite3 db/app.db < db/views.sql
+```
+
+#### Querying views
+```bash
+sqlite3 db/app.db "SELECT * FROM vw_RequestVolume;"
+sqlite3 db/app.db "SELECT * FROM vw_TopEndpoints;"
+sqlite3 db/app.db "SELECT * FROM vw_HourlyTraffic;"
+```
 
 ### Start the Frontend
 ```bash
@@ -124,6 +151,14 @@ Look for `// TODO:` comments in these service files:
 - `client/src/app/services/request-log.service.ts`
 
 Replace `return of([])` with actual `this.http.get/post/put/delete()` calls to connect to the backend API.
+
+## SQL Views and Indexes
+
+**Views** let you encapsulate complex JOIN and aggregation logic once and reuse it like a table. The `vw_RequestVolume` view joins `ApiKeys` with `RequestLogs` and computes success/error counts — without a view you'd need to repeat that JOIN every time you query it.
+
+**Indexes** are critical for request log tables because they grow fast. Without `IX_RequestLogs_Timestamp`, every time-range query scans the entire table. With it, SQLite jumps directly to the matching rows.
+
+The `UNIQUE` index on `ApiKeys.Key` does double duty: it speeds up key lookups in the auth middleware and enforces uniqueness at the database level as a safety net beyond application-level validation.
 
 ## Key Takeaways
 - Middleware runs before controllers, making it the right place for cross-cutting concerns like auth, logging, and rate limiting

@@ -23,9 +23,28 @@ A notification service API that allows applications to create notifications, tra
 ### Start the Backend
 ```bash
 cd server
+dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
-The SQLite database will be auto-created in the `db/` folder on first run.
+
+### Database
+
+The schema is managed via EF Core Migrations. Reference SQL files live in the `db/` folder:
+
+| File | Purpose |
+|------|---------|
+| `db/schema.sql` | Table definitions for `Notifications` and `Webhooks` |
+| `db/stored-procedures.md` | Teaching guide: stored procedures vs raw SQL in SQLite |
+| `db/indexes.sql` | Performance indexes for unread queries and type filtering |
+| `db/seed.sql` | 13 sample notifications across all types, plus 3 webhooks |
+| `db/queries.sql` | Practice queries: unread counts, pending delivery, read rates |
+
+#### Running the SQL files manually
+```bash
+sqlite3 db/app.db < db/schema.sql
+sqlite3 db/app.db < db/indexes.sql
+sqlite3 db/app.db < db/seed.sql
+```
 
 ### Start the Frontend
 ```bash
@@ -44,6 +63,7 @@ Open **http://localhost:4200**
 | GET | `/api/notifications` | List all notifications |
 | GET | `/api/notifications/{id}` | Get a single notification by ID |
 | POST | `/api/notifications` | Create a new notification |
+| POST | `/api/notifications/mark-all-read` | Mark all unread notifications as read (raw SQL batch update) |
 | PUT | `/api/notifications/{id}` | Update notification fields |
 | DELETE | `/api/notifications/{id}` | Delete a notification |
 
@@ -142,6 +162,19 @@ Look for `// TODO:` comments in these service files:
 - `client/src/app/services/webhook.service.ts`
 
 Replace `return of([])` with actual `this.http.get/post/put/delete()` calls to connect to the backend API.
+
+## Stored Procedures vs Raw SQL
+
+SQLite does not support stored procedures, but the concept translates directly. A stored procedure is pre-compiled SQL stored in the database itself — useful for batch operations, complex business logic shared across apps, and security boundaries.
+
+The `mark-all-read` endpoint demonstrates the SQLite equivalent using EF Core's `ExecuteSqlRawAsync`:
+
+```csharp
+var count = await _db.Database.ExecuteSqlRawAsync(
+    "UPDATE Notifications SET IsRead = 1 WHERE IsRead = 0");
+```
+
+This runs a single SQL statement that updates all matching rows in one database round-trip, which is far more efficient than fetching each record and saving them individually. See `db/stored-procedures.md` for a full comparison with SQL Server stored procedure syntax.
 
 ## Key Takeaways
 - Background services (`BackgroundService`) run outside the request pipeline and are ideal for async delivery tasks like sending emails or firing webhook callbacks
