@@ -16,40 +16,48 @@ public class TasksController : ControllerBase
         _db = db;
     }
 
+    /*
+        the app requires the following functions
+        - GetAll
+        - GetById
+        - Create
+        - Update
+        - Delete
+    
+    */
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var tasks = await _db.Tasks.ToListAsync();
-        return Ok(tasks);
+        var tasks = await _db.Tasks.ToArrayAsync();
+        return Ok(tasks);     
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var task = await _db.Tasks.FindAsync(id);
-        if (task is null) return NotFound();
+        var task = await _db.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+        if(task == null) return NotFound();
         return Ok(task);
     }
+
 
     [HttpPost]
     public async Task<IActionResult> Create(TaskItem task)
     {
-        task.CreatedAt = DateTime.UtcNow;
         _db.Tasks.Add(task);
         await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+        return Ok(task);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, TaskItem updated)
     {
-        var task = await _db.Tasks.FindAsync(id);
-        if (task is null) return NotFound();
-
+        var task = await _db.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+        if(task == null) return NotFound();
         task.Title = updated.Title;
         task.Description = updated.Description;
         task.IsComplete = updated.IsComplete;
-
         await _db.SaveChangesAsync();
         return Ok(task);
     }
@@ -57,11 +65,10 @@ public class TasksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var task = await _db.Tasks.FindAsync(id);
-        if (task is null) return NotFound();
-
-        _db.Tasks.Remove(task);
+        var task = await _db.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+        if(task == null) return NotFound();
+        _db.Remove(task);
         await _db.SaveChangesAsync();
-        return NoContent();
+        return Ok(task);
     }
 }
