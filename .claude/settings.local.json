@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /c/Users/jason/Documents/\"Jason Docs\"/projects/backend-course)",
+      "Bash(for week:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/jason/Documents/Jason Docs/projects/backend-course/**)",
+      "Bash(done)"
+    ]
+  }
+}
