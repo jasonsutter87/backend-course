@@ -16,69 +16,52 @@ public class ContactsController : ControllerBase
         _db = db;
     }
 
+
+    /*
+        The App required the following endpoints
+        - GetAll
+        - GetById
+        - Search
+        - Create
+        - Update
+        - Delete
+    
+    */
+
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var contacts = await _db.Contacts.ToListAsync();
-        return Ok(contacts);
+        //Todo
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var contact = await _db.Contacts.FindAsync(id);
-        if (contact is null) return NotFound();
-        return Ok(contact);
+        //Todo
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search([FromQuery] string query)
     {
-        if (string.IsNullOrWhiteSpace(query)) return BadRequest("Query parameter is required.");
-
-        var lower = query.ToLower();
-        var results = await _db.Contacts
-            .Where(c =>
-                c.FirstName.ToLower().Contains(lower) ||
-                c.LastName.ToLower().Contains(lower) ||
-                c.Email.ToLower().Contains(lower))
-            .ToListAsync();
-
-        return Ok(results);
+        //Todo
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(Contact contact)
     {
-        contact.CreatedAt = DateTime.UtcNow;
-        _db.Contacts.Add(contact);
-        await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = contact.Id }, contact);
+        //Todo
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, Contact updated)
     {
-        var contact = await _db.Contacts.FindAsync(id);
-        if (contact is null) return NotFound();
-
-        contact.FirstName = updated.FirstName;
-        contact.LastName = updated.LastName;
-        contact.Email = updated.Email;
-        contact.Phone = updated.Phone;
-
-        await _db.SaveChangesAsync();
-        return Ok(contact);
+        //Todo
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var contact = await _db.Contacts.FindAsync(id);
-        if (contact is null) return NotFound();
-
-        _db.Contacts.Remove(contact);
-        await _db.SaveChangesAsync();
-        return NoContent();
+        //Todo
     }
 }
