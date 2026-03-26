@@ -13,7 +13,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddTransient<RateLimitingMiddleware>();
 builder.Services.AddTransient<ApiKeyMiddleware>();
-builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
