@@ -1,36 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Webhook, CreateWebhookDto } from '../models/webhook.model';
 
 @Injectable({ providedIn: 'root' })
 export class WebhookService {
+  private baseUrl = 'http://localhost:5000/api/webhooks';
+
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Webhook[]> {
-    // TODO: Implement GET request to http://localhost:5000/api/webhooks
-    return of([]);
+    return this.http.get<Webhook[]>(this.baseUrl);
   }
 
   getById(id: number): Observable<Webhook> {
-    // TODO: Implement GET request to http://localhost:5000/api/webhooks/{id}
-    return of({} as Webhook);
+    return this.http.get<Webhook>(`${this.baseUrl}/${id}`);
   }
 
   create(dto: CreateWebhookDto): Observable<Webhook> {
-    // TODO: Implement POST request to http://localhost:5000/api/webhooks
-    // Body: dto
-    return of({} as Webhook);
+    return this.http.post<Webhook>(this.baseUrl, dto);
   }
 
   update(id: number, webhook: Partial<Webhook>): Observable<Webhook> {
-    // TODO: Implement PUT request to http://localhost:5000/api/webhooks/{id}
-    // Body: webhook (url, secret, isActive, events)
-    return of({} as Webhook);
+    return this.http.put<Webhook>(`${this.baseUrl}/${id}`, webhook);
   }
 
   delete(id: number): Observable<void> {
-    // TODO: Implement DELETE request to http://localhost:5000/api/webhooks/{id}
-    return of(undefined);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

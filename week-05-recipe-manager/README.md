@@ -22,7 +22,6 @@ A recipe management app where users can create recipes and organize them with ta
 ### Start the Backend
 ```bash
 cd server
-dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
 

@@ -1,42 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ApiKey, CreateApiKeyDto } from '../models/api-key.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiKeyService {
+  private baseUrl = 'http://localhost:5000/api/apikeys';
+
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<ApiKey[]> {
-    // TODO: Implement GET request to http://localhost:5000/api/apikeys
-    return of([]);
+    return this.http.get<ApiKey[]>(this.baseUrl);
   }
 
   getById(id: number): Observable<ApiKey> {
-    // TODO: Implement GET request to http://localhost:5000/api/apikeys/{id}
-    return of({} as ApiKey);
+    return this.http.get<ApiKey>(`${this.baseUrl}/${id}`);
   }
 
   create(dto: CreateApiKeyDto): Observable<ApiKey> {
-    // TODO: Implement POST request to http://localhost:5000/api/apikeys
-    // Body: { name: dto.name, rateLimit: dto.rateLimit }
-    return of({} as ApiKey);
+    return this.http.post<ApiKey>(this.baseUrl, dto);
   }
 
   update(id: number, apiKey: Partial<ApiKey>): Observable<ApiKey> {
-    // TODO: Implement PUT request to http://localhost:5000/api/apikeys/{id}
-    // Body: apiKey (name, isActive, rateLimit)
-    return of({} as ApiKey);
+    return this.http.put<ApiKey>(`${this.baseUrl}/${id}`, apiKey);
   }
 
   delete(id: number): Observable<void> {
-    // TODO: Implement DELETE request to http://localhost:5000/api/apikeys/{id}
-    return of(undefined);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
   generate(): Observable<ApiKey> {
-    // TODO: Implement POST request to generate a new API key with a random key string
-    // Hint: POST to http://localhost:5000/api/apikeys with a generated key value
-    return of({} as ApiKey);
+    const key = crypto.randomUUID().replace(/-/g, '');
+    return this.http.post<ApiKey>(this.baseUrl, {
+      key,
+      name: 'Generated Key',
+      isActive: true,
+      rateLimit: 100
+    });
   }
 }

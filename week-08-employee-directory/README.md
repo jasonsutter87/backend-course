@@ -23,7 +23,6 @@ An employee directory app for browsing staff and org structure. Departments can 
 ### Start the Backend
 ```bash
 cd server
-dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
 

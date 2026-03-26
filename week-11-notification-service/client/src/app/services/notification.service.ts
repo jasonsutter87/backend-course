@@ -1,36 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Notification, CreateNotificationDto } from '../models/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
+  private baseUrl = 'http://localhost:5000/api/notifications';
+
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Notification[]> {
-    // TODO: Implement GET request to http://localhost:5000/api/notifications
-    return of([]);
+    return this.http.get<Notification[]>(this.baseUrl);
   }
 
   getById(id: number): Observable<Notification> {
-    // TODO: Implement GET request to http://localhost:5000/api/notifications/{id}
-    return of({} as Notification);
+    return this.http.get<Notification>(`${this.baseUrl}/${id}`);
   }
 
   create(dto: CreateNotificationDto): Observable<Notification> {
-    // TODO: Implement POST request to http://localhost:5000/api/notifications
-    // Body: dto
-    return of({} as Notification);
+    return this.http.post<Notification>(this.baseUrl, dto);
   }
 
   markAsRead(id: number, notification: Notification): Observable<Notification> {
-    // TODO: Implement PUT request to http://localhost:5000/api/notifications/{id}
-    // Body: { ...notification, isRead: true }
-    return of({} as Notification);
+    return this.http.put<Notification>(`${this.baseUrl}/${id}`, { ...notification, isRead: true });
   }
 
   delete(id: number): Observable<void> {
-    // TODO: Implement DELETE request to http://localhost:5000/api/notifications/{id}
-    return of(undefined);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

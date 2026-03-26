@@ -23,7 +23,6 @@ A support ticket management API that lets teams create, track, and resolve custo
 ### Start the Backend
 ```bash
 cd server
-dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
 

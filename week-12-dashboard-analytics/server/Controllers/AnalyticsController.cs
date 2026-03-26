@@ -19,15 +19,25 @@ public class AnalyticsController : ControllerBase
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
-        // TODO: Implement summary aggregation across DataPoints
         var count = await _db.DataPoints.CountAsync();
-        return Ok(new { totalDataPoints = count });
+        var total = await _db.DataPoints.SumAsync(d => d.Value);
+        var average = count > 0 ? await _db.DataPoints.AverageAsync(d => d.Value) : 0;
+        var min = count > 0 ? await _db.DataPoints.MinAsync(d => d.Value) : 0;
+        var max = count > 0 ? await _db.DataPoints.MaxAsync(d => d.Value) : 0;
+
+        return Ok(new
+        {
+            totalDataPoints = count,
+            total,
+            average,
+            min,
+            max
+        });
     }
 
     [HttpGet("trend")]
     public async Task<IActionResult> GetTrend([FromQuery] string? category, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
-        // TODO: Implement trend analysis filtered by category and date range
         var query = _db.DataPoints.AsQueryable();
 
         if (!string.IsNullOrEmpty(category))

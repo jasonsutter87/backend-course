@@ -23,7 +23,6 @@ An inventory management app where warehouse staff track products and record stoc
 ### Start the Backend
 ```bash
 cd server
-dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
 

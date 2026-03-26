@@ -13,15 +13,19 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddTransient<RateLimitingMiddleware>();
 builder.Services.AddTransient<ApiKeyMiddleware>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 app.UseCors();
 app.UseMiddleware<ApiKeyMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 app.MapControllers();
-
-// Database is managed via EF Core Migrations
-// Run: dotnet ef database update
 
 app.Run();

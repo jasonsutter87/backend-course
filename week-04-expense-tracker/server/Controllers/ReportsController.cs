@@ -18,7 +18,6 @@ public class ReportsController : ControllerBase
     [HttpGet("monthly")]
     public async Task<IActionResult> GetMonthly([FromQuery] int? year, [FromQuery] int? month)
     {
-        // TODO: group expenses by month and return totals
         var targetYear = year ?? DateTime.UtcNow.Year;
         var targetMonth = month ?? DateTime.UtcNow.Month;
 
@@ -41,7 +40,6 @@ public class ReportsController : ControllerBase
     [HttpGet("by-category")]
     public async Task<IActionResult> GetByCategory()
     {
-        // TODO: group expenses by category and return totals per category
         var results = await _db.Expenses
             .Include(e => e.Category)
             .GroupBy(e => new { e.CategoryId, e.Category!.Name })

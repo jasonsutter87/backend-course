@@ -23,7 +23,6 @@ A dashboard analytics service that stores raw metric data points and a set of co
 ### Start the Backend
 ```bash
 cd server
-dotnet ef database update
 dotnet run --urls="http://localhost:5000"
 ```
 
