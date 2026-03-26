@@ -16,33 +16,22 @@ public class CommentsController : ControllerBase
         _db = db;
     }
 
+
     [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetByPostId(int postId)
     {
-        var comments = await _db.Comments
-            .Include(c => c.Author)
-            .Where(c => c.PostId == postId)
-            .ToListAsync();
-        return Ok(comments);
+       //Todo
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(Comment comment)
     {
-        comment.CreatedAt = DateTime.UtcNow;
-        _db.Comments.Add(comment);
-        await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetByPostId), new { postId = comment.PostId }, comment);
+      //Todo
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var comment = await _db.Comments.FindAsync(id);
-        if (comment is null) return NotFound();
-
-        _db.Comments.Remove(comment);
-        await _db.SaveChangesAsync();
-        return NoContent();
+       //Todo
     }
 }
